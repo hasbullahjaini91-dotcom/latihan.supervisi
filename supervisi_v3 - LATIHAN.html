@@ -1,0 +1,2236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supervisi Pembelajaran Mendalam — SDN 1 Raja</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --c-bg: #f0f4f8;
+  --c-surface: #ffffff;
+  --c-surface2: #f8fafc;
+  --c-border: #e2e8f0;
+  --c-text: #0f172a;
+  --c-muted: #64748b;
+  --c-primary: #1e40af;
+  --c-primary-light: #dbeafe;
+  --c-accent: #0ea5e9;
+  --c-success: #059669;
+  --c-success-light: #d1fae5;
+  --c-warning: #d97706;
+  --c-warning-light: #fef3c7;
+  --c-danger: #dc2626;
+  --c-danger-light: #fee2e2;
+  --c-purple: #7c3aed;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+  min-height: 100vh;
+}
+
+/* ========= LAYOUT ========= */
+#app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ========= HEADER ========= */
+.app-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
+  border-radius: var(--radius);
+  padding: 20px 28px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.app-header::before {
+  content: '';
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 240px; height: 240px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+.app-header::after {
+  content: '';
+  position: absolute;
+  left: 30%; bottom: -80px;
+  width: 180px; height: 180px;
+  background: rgba(14,165,233,0.12);
+  border-radius: 50%;
+}
+.header-logo-box {
+  width: 54px; height: 54px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.header-logo-box img { width: 100%; height: 100%; object-fit: contain; }
+.header-text { flex: 1; position: relative; z-index: 1; }
+.header-text h1 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.3px;
+}
+.header-text p {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  color: rgba(255,255,255,0.65);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+.header-stats {
+  display: flex;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+.hstat {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-align: center;
+}
+.hstat-val { font-size: 1.3rem; font-weight: 800; color: white; }
+.hstat-lbl { font-size: 0.65rem; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 0.3px; }
+
+/* ========= TABS ========= */
+.tabs {
+  background: var(--c-surface);
+  border-radius: var(--radius);
+  padding: 6px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  gap: 4px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  color: var(--c-muted);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn.active {
+  background: var(--c-primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(30,64,175,0.35);
+}
+.tab-btn:hover:not(.active) { background: var(--c-primary-light); color: var(--c-primary); }
+
+/* ========= CARD ========= */
+.card {
+  background: var(--c-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 22px;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--c-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title::after { content: ''; flex: 1; height: 1px; background: var(--c-border); }
+
+/* ========= FORM FIELDS ========= */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.col-span-2 { grid-column: 1 / -1; }
+.field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 5px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--c-text);
+  background: var(--c-surface);
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  box-sizing: border-box;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(30,64,175,0.1);
+}
+.field input[readonly], .field textarea[readonly] {
+  background: var(--c-surface2);
+  color: var(--c-muted);
+}
+
+/* ========= BUTTONS ========= */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px;
+  border: none; border-radius: var(--radius-sm);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem; font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+.btn:active { transform: translateY(0); }
+.btn-primary { background: var(--c-primary); color: white; }
+.btn-success { background: var(--c-success); color: white; }
+.btn-danger  { background: var(--c-danger);  color: white; }
+.btn-gray    { background: #475569; color: white; }
+.btn-purple  { background: var(--c-purple); color: white; }
+.btn-accent  { background: var(--c-accent); color: white; }
+.btn-outline { background: transparent; border: 1.5px solid var(--c-border); color: var(--c-muted); }
+.btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+/* ========= TABLES ========= */
+.tbl { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.tbl th {
+  background: var(--c-surface2);
+  padding: 9px 12px;
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--c-muted);
+  border-bottom: 2px solid var(--c-border);
+  font-weight: 700;
+}
+.tbl td { padding: 9px 12px; border-bottom: 1px solid var(--c-border); vertical-align: middle; }
+.tbl tr:hover td { background: var(--c-primary-light); }
+.tbl .section-row td {
+  background: var(--c-primary-light);
+  color: var(--c-primary);
+  font-weight: 800;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-left: 3px solid var(--c-primary);
+}
+
+/* ========= BADGE ========= */
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.badge-bs { background:#d1fae5;color:#065f46; }
+.badge-b  { background:#dbeafe;color:#1d4ed8; }
+.badge-c  { background:#fef3c7;color:#92400e; }
+.badge-k  { background:#fee2e2;color:#991b1b; }
+.badge-ks { background:#fce7f3;color:#9d174d; }
+
+/* ========= SCORE BADGE ========= */
+.score-badge {
+  display: inline-block; min-width: 34px;
+  padding: 3px 8px; border-radius: 20px;
+  text-align: center; font-weight: 800; font-size: 0.88rem;
+  background: var(--c-surface2); color: var(--c-text);
+  transition: all 0.2s;
+}
+.score-badge.high { background: var(--c-success-light); color: var(--c-success); }
+.score-badge.mid  { background: var(--c-warning-light); color: var(--c-warning); }
+.score-badge.low  { background: var(--c-danger-light);  color: var(--c-danger); }
+
+/* ========= RESULT BAR ========= */
+.result-bar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--c-primary-light), #eff6ff);
+  border-radius: var(--radius);
+  border: 1.5px solid #bfdbfe;
+  margin-top: 12px;
+}
+.result-pct { font-size: 2rem; font-weight: 800; color: var(--c-primary); line-height: 1; }
+.progress { flex: 1; height: 8px; background: #dbeafe; border-radius: 4px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, #1d4ed8, #3b82f6); border-radius: 4px; transition: width 0.5s ease; }
+
+/* ========= INDICATOR ITEM ========= */
+.ind-item {
+  display: flex !important; align-items: flex-start !important;
+  gap: 8px !important; padding: 5px 0 !important;
+  font-size: 0.8rem !important; color: var(--c-muted) !important;
+  cursor: pointer !important;
+}
+.ind-item:hover { color: var(--c-primary) !important; }
+.ind-item input[type=checkbox] {
+  width: 16px !important; height: 16px !important;
+  min-width: 16px !important; margin-top: 2px !important;
+  accent-color: var(--c-primary) !important; cursor: pointer !important;
+  flex-shrink: 0 !important;
+  -webkit-appearance: checkbox !important;
+  appearance: auto !important;
+}
+.ind-list { margin: 6px 0 0; padding: 0; list-style: none; }
+.info-btn {
+  background: none !important; border: 1.5px solid #bfdbfe !important;
+  color: var(--c-primary) !important; border-radius: 50% !important;
+  width: 18px !important; height: 18px !important; min-width: 18px !important;
+  font-size: 0.68rem !important; font-weight: 700 !important;
+  cursor: pointer !important; display: inline-flex !important;
+  align-items: center !important; justify-content: center !important;
+  padding: 0 !important; flex-shrink: 0 !important;
+  transition: all 0.15s !important;
+}
+.info-btn:hover { background: var(--c-primary) !important; color: white !important; }
+
+/* ========= SIGN AREA ========= */
+.ttd { display: flex; justify-content: space-around; margin-top: 24px; }
+.ttd-box { text-align: center; font-size: 0.83rem; }
+.ttd-name { margin-top: 52px; font-weight: 800; border-top: 1.5px solid var(--c-text); display: inline-block; padding-top: 4px; min-width: 160px; }
+.ttd-nip { font-size: 0.75rem; color: var(--c-muted); margin-top: 2px; }
+
+/* ========= DASHBOARD ========= */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.stat-card {
+  background: var(--c-surface);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid transparent;
+  transition: transform 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); }
+.stat-card.blue  { border-color: var(--c-primary); }
+.stat-card.green { border-color: var(--c-success); }
+.stat-card.orange{ border-color: var(--c-warning); }
+.stat-card.red   { border-color: var(--c-danger);  }
+.stat-num { font-size: 2rem; font-weight: 800; line-height: 1; }
+.stat-lbl { font-size: 0.72rem; color: var(--c-muted); font-weight: 600; margin-top: 3px; }
+
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.donut-container { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
+.donut-svg { width: 130px; height: 130px; }
+.donut-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.donut-pct { font-size: 1.4rem; font-weight: 800; color: var(--c-primary); }
+.donut-lbl { font-size: 0.65rem; color: var(--c-muted); font-weight: 600; }
+.legend { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 600; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ========= TOAST ========= */
+#toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: #0f172a; color: white;
+  padding: 12px 18px; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 600;
+  z-index: 9999;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s ease;
+  max-width: 320px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.success { border-left: 4px solid #22c55e; }
+#toast.error   { border-left: 4px solid #ef4444; }
+#toast.info    { border-left: 4px solid #3b82f6; }
+
+/* ========= MODAL ========= */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 99999;
+  align-items: center; justify-content: center; padding: 16px;
+  background: rgba(15,23,42,0.5);
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: white; border-radius: 14px;
+  padding: 24px 28px; max-width: 440px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: modal-in 0.2s ease;
+}
+@keyframes modal-in { from { transform: scale(0.93) translateY(14px); opacity: 0; } }
+.modal-icon { width: 44px; height: 44px; background: var(--c-primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 12px; }
+.modal-title { font-size: 0.95rem; font-weight: 800; color: var(--c-primary); margin-bottom: 10px; }
+.modal-body { font-size: 0.85rem; color: #475569; line-height: 1.75; margin-bottom: 18px; }
+
+/* ========= SPINNER ========= */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========= STATUS DOT ========= */
+.gs-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; }
+.gs-status.ok      { background: var(--c-success-light); color: var(--c-success); }
+.gs-status.err     { background: var(--c-danger-light);  color: var(--c-danger); }
+.gs-status.loading { background: var(--c-warning-light); color: var(--c-warning); }
+.gs-status .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse-dot 1.4s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ========= GURU SCHEDULE TABLE ========= */
+.guru-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+.guru-table th { background: var(--c-primary); color: white; padding: 8px 12px; text-align: left; font-weight: 700; font-size: 0.7rem; }
+.guru-table td { padding: 8px 12px; border-bottom: 1px solid var(--c-border); }
+.guru-table tr:hover td { background: var(--c-primary-light); }
+.status-done   { background: var(--c-success-light); color: var(--c-success); padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; }
+.status-pending{ background: var(--c-warning-light); color: var(--c-warning); padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; }
+
+/* ========= DATA ISIAN ========= */
+.data-section-header {
+  background: linear-gradient(90deg, var(--c-primary-light), transparent);
+  border-left: 3px solid var(--c-primary);
+  padding: 8px 14px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.75rem; font-weight: 800; color: var(--c-primary);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+/* ========= PRINT AREA ========= */
+#print-area {
+  display: none;
+  font-family: 'Times New Roman', serif;
+  font-size: 11pt; color: #000; background: #fff;
+}
+#print-area .kop { display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 14px; }
+#print-area .kop-logo { width: 72px; height: 72px; flex-shrink: 0; margin-right: 14px; display: flex; align-items: center; justify-content: center; }
+#print-area .kop-logo img { width: 100%; height: 100%; object-fit: contain; }
+#print-area .kop-text { flex: 1; text-align: center; }
+#print-area .kop-text .inst    { font-size: 9pt; margin: 0 0 1px; }
+#print-area .kop-text .school  { font-size: 15pt; font-weight: bold; text-transform: uppercase; margin: 2px 0; }
+#print-area .kop-text .addr    { font-size: 8.5pt; }
+#print-area .judul-h { text-align: center; margin: 14px 0 12px; }
+#print-area .judul-h h2 { font-size: 13pt; font-weight: bold; text-transform: uppercase; text-decoration: underline; margin: 0; }
+#print-area .tbl-id { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10.5pt; }
+#print-area .tbl-id td { padding: 2px 4px; vertical-align: top; }
+#print-area .tbl-id .lbl { width: 36%; }
+#print-area .tbl-id .sep { width: 2%; text-align: center; }
+#print-area .tbl-instr { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 10px; }
+#print-area .tbl-instr th, #print-area .tbl-instr td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+#print-area .tbl-instr thead th { background: #e8e8e8; text-align: center; font-weight: bold; }
+#print-area .cat-box { margin-bottom: 10px; font-size: 10.5pt; }
+#print-area .cat-box .cat-lbl { font-weight: bold; margin-bottom: 3px; }
+#print-area .cat-box .cat-isi { border: 1px solid #000; min-height: 55px; padding: 6px 8px; font-size: 10pt; }
+#print-area .pr-ttd { display: flex; justify-content: space-between; margin-top: 22px; font-size: 10.5pt; }
+#print-area .pr-ttd-box { text-align: center; width: 44%; }
+#print-area .pr-ttd-box .space { height: 60px; }
+#print-area .pr-ttd-box .nama { font-weight: bold; border-top: 1px solid #000; padding-top: 3px; display: inline-block; min-width: 160px; }
+#print-area .pr-ttd-box .nip  { font-size: 10pt; margin-top: 2px; }
+#print-area .pr-footer { margin-top: 16px; border-top: 1px solid #ccc; padding-top: 5px; text-align: center; font-size: 8.5pt; color: #555; }
+
+@media screen { #print-area { display: none !important; } }
+@media print {
+  @page { size: A4 portrait; margin: 1.5cm 1.8cm; }
+  body > *:not(#print-area) { display: none !important; }
+  #print-area { display: block !important; margin: 0; padding: 0; }
+}
+
+/* ========= RESPONSIVE ========= */
+@media (max-width: 700px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .dash-stats { grid-template-columns: 1fr 1fr; }
+  .tabs { flex-wrap: wrap; }
+  .tab-btn { flex: 0 1 auto; }
+  .header-stats { display: none; }
+}
+
+/* ========= GURU SELECT DROPDOWN ========= */
+.select-guru-wrap { position: relative; }
+.guru-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: white; border: 1.5px solid var(--c-primary);
+  border-radius: var(--radius-sm); z-index: 100;
+  max-height: 200px; overflow-y: auto;
+  box-shadow: var(--shadow);
+  display: none;
+}
+.guru-dropdown.open { display: block; }
+.guru-dropdown-item {
+  padding: 9px 12px; font-size: 0.83rem; cursor: pointer;
+  border-bottom: 1px solid var(--c-border);
+}
+.guru-dropdown-item:hover { background: var(--c-primary-light); color: var(--c-primary); }
+.guru-dropdown-item:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div class="header-logo-box" id="header-logo-box">
+      <span style="color:rgba(255,255,255,0.5);font-size:0.65rem;text-align:center">LOGO</span>
+    </div>
+    <div class="header-text">
+      <h1>📋 Supervisi Pembelajaran Mendalam</h1>
+      <p id="header-subtitle">SDN 1 Raja — Instrumen Penilaian Supervisi Guru</p>
+      <a id="header-web-link" href="https://www.sdn1raja.sch.id" target="_blank"
+         style="display:inline-flex;align-items:center;gap:5px;margin-top:5px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.9);font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;text-decoration:none;transition:all 0.2s;position:relative;z-index:1"
+         onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+         onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+        🌐 www.sdn1raja.sch.id
+      </a>
+    </div>
+    <div class="header-stats">
+      <div class="hstat"><div class="hstat-val" id="hstat-guru">0</div><div class="hstat-lbl">Total Guru</div></div>
+      <div class="hstat"><div class="hstat-val" id="hstat-done">0</div><div class="hstat-lbl">Sudah Supervisi</div></div>
+      <div class="hstat"><div class="hstat-val" id="hstat-pct">0%</div><div class="hstat-lbl">Keterlaksanaan</div></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showPage('pg-dashboard')"  id="tab-dashboard">🏠 Dashboard</button>
+    <button class="tab-btn"       onclick="showPage('pg-data')"       id="tab-data">📋 Data Isian</button>
+    <button class="tab-btn"       onclick="showPage('pg-form')"       id="tab-form">📝 Form Supervisi</button>
+    <button class="tab-btn"       onclick="showPage('pg-database')"   id="tab-database">🗄️ Database & Cetak</button>
+    <button class="tab-btn"       onclick="showPage('pg-setting')"    id="tab-setting">⚙️ Pengaturan</button>
+  </div>
+
+  <!-- ========= PAGE: DASHBOARD ========= -->
+  <div id="pg-dashboard" class="page">
+
+    <div class="dash-stats">
+      <div class="stat-card blue">
+        <div class="stat-num" id="ds-guru" style="color:var(--c-primary)">0</div>
+        <div class="stat-lbl">Total Guru</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-num" id="ds-done" style="color:var(--c-success)">0</div>
+        <div class="stat-lbl">Sudah Supervisi</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-num" id="ds-pending" style="color:var(--c-warning)">0</div>
+        <div class="stat-lbl">Belum Supervisi</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-num" id="ds-avg" style="color:var(--c-danger)">0%</div>
+        <div class="stat-lbl">Rata-rata Hasil</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px">
+
+      <!-- Infografis Sekolah -->
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <p class="card-title">🏫 Data Sekolah</p>
+          <div style="text-align:center;margin-bottom:12px">
+            <div id="dash-logo" style="width:72px;height:72px;border-radius:12px;border:2px dashed var(--c-border);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden;background:var(--c-surface2)">
+              <span style="font-size:0.65rem;color:var(--c-muted)">LOGO</span>
+            </div>
+          </div>
+          <div id="dash-sekolah-info" style="font-size:0.78rem;color:var(--c-muted);line-height:1.8">
+            <div><b style="color:var(--c-text)">—</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="card-title">👤 Kepala Sekolah</p>
+          <div id="dash-kepsek-info" style="font-size:0.78rem;color:var(--c-muted);line-height:1.9">
+            <div><b style="color:var(--c-text)">—</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Donut chart -->
+        <div class="card" style="margin-bottom:14px">
+          <p class="card-title">📊 Keterlaksanaan Supervisi</p>
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <svg class="donut-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+                <circle id="donut-done" cx="50" cy="50" r="38" fill="none" stroke="#059669" stroke-width="12"
+                  stroke-dasharray="0 239" stroke-linecap="round"
+                  transform="rotate(-90 50 50)" style="transition:stroke-dasharray 0.7s ease"/>
+                <circle id="donut-pending" cx="50" cy="50" r="38" fill="none" stroke="#d97706" stroke-width="12"
+                  stroke-dasharray="0 239" stroke-linecap="round"
+                  transform="rotate(-90 50 50)" style="transition:stroke-dasharray 0.7s ease"/>
+              </svg>
+              <div class="donut-center">
+                <div class="donut-pct" id="donut-pct">0%</div>
+                <div class="donut-lbl">Selesai</div>
+              </div>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:var(--c-success)"></span><span>Sudah Supervisi: <b id="leg-done">0</b> guru</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--c-warning)"></span><span>Belum Supervisi: <b id="leg-pending">0</b> guru</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--c-primary)"></span><span>Total Guru: <b id="leg-total">0</b> orang</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jadwal Supervisi -->
+        <div class="card">
+          <p class="card-title">📅 Jadwal Supervisi Guru</p>
+          <div style="overflow-x:auto">
+            <table class="guru-table">
+              <thead>
+                <tr><th>No</th><th>Nama Guru</th><th>Mata Pelajaran</th><th>Jadwal</th><th>Status</th></tr>
+              </thead>
+              <tbody id="dash-jadwal-body">
+                <tr><td colspan="5" style="text-align:center;color:var(--c-muted);padding:16px">Belum ada data guru</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= PAGE: DATA ISIAN ========= -->
+  <div id="pg-data" class="page" style="display:none">
+
+    <!-- Data Sekolah -->
+    <div class="card">
+      <p class="card-title">🏫 Data Sekolah</p>
+      <div class="grid-2">
+        <div class="field col-span-2">
+          <label>Nama Sekolah</label>
+          <input type="text" id="d_nama_sekolah" placeholder="Nama sekolah lengkap...">
+        </div>
+        <div class="field">
+          <label>Jenjang Pendidikan</label>
+          <select id="d_jenjang">
+            <option value="TK">TK</option>
+            <option value="SD" selected>SD</option>
+            <option value="SMP">SMP</option>
+            <option value="SMA">SMA</option>
+            <option value="SMK">SMK</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>NPSN</label>
+          <input type="text" id="d_npsn" placeholder="Nomor Pokok Sekolah...">
+        </div>
+        <div class="field col-span-2">
+          <label>Alamat Sekolah</label>
+          <input type="text" id="d_alamat" placeholder="Alamat lengkap sekolah...">
+        </div>
+        <div class="field">
+          <label>Kabupaten / Kota</label>
+          <input type="text" id="d_kabupaten" placeholder="Kab/Kota...">
+        </div>
+        <div class="field">
+          <label>Provinsi</label>
+          <input type="text" id="d_provinsi" placeholder="Provinsi...">
+        </div>
+        <div class="field">
+          <label>Website Sekolah</label>
+          <input type="text" id="d_website" placeholder="www.sekolah.sch.id">
+        </div>
+        <div class="field">
+          <label>Tahun Pelajaran</label>
+          <input type="text" id="d_tapel" placeholder="2025/2026">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-success" onclick="saveDataSekolah()">💾 Simpan Data Sekolah</button>
+      </div>
+    </div>
+
+    <!-- Data Kepala Sekolah -->
+    <div class="card">
+      <p class="card-title">👤 Data Kepala Sekolah</p>
+      <div class="grid-2">
+        <div class="field col-span-2">
+          <label>Nama Kepala Sekolah</label>
+          <input type="text" id="d_nama_kepsek" placeholder="Nama lengkap dengan gelar...">
+        </div>
+        <div class="field">
+          <label>NIP</label>
+          <input type="text" id="d_nip_kepsek" placeholder="NIP Kepala Sekolah...">
+        </div>
+        <div class="field">
+          <label>No. SK / Pangkat</label>
+          <input type="text" id="d_sk_kepsek" placeholder="Pangkat/Golongan...">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-success" onclick="saveDataKepsek()">💾 Simpan Data Kepala Sekolah</button>
+      </div>
+    </div>
+
+    <!-- Data Guru -->
+    <div class="card">
+      <p class="card-title">👩‍🏫 Data Guru & Jadwal Supervisi</p>
+
+      <!-- Form tambah guru -->
+      <div style="background:var(--c-surface2);border-radius:var(--radius-sm);border:1.5px solid var(--c-border);padding:16px;margin-bottom:16px" id="form-guru-wrapper">
+        <div class="data-section-header">Tambah / Edit Data Guru</div>
+        <div class="grid-3">
+          <div class="field col-span-2" style="grid-column: 1 / 3">
+            <label>Nama Guru</label>
+            <input type="text" id="g_nama" placeholder="Nama lengkap guru...">
+          </div>
+          <div class="field">
+            <label>NIP / NIK</label>
+            <input type="text" id="g_nip" placeholder="NIP/NIK...">
+          </div>
+          <div class="field">
+            <label>Mata Pelajaran / Kelas</label>
+            <input type="text" id="g_mapel" placeholder="cth: Matematika / Kelas 5A">
+          </div>
+          <div class="field">
+            <label>Jadwal Supervisi</label>
+            <input type="date" id="g_jadwal">
+          </div>
+          <div class="field">
+            <label>No HP / Email</label>
+            <input type="text" id="g_kontak" placeholder="Opsional...">
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="tambahGuru()">➕ Tambah Guru</button>
+          <button class="btn btn-outline" onclick="resetFormGuru()">🔄 Reset</button>
+        </div>
+        <input type="hidden" id="g_edit_idx" value="-1">
+      </div>
+
+      <!-- Tabel guru -->
+      <div style="overflow-x:auto">
+        <table class="guru-table">
+          <thead>
+            <tr><th>No</th><th>Nama Guru</th><th>NIP</th><th>Mapel/Kelas</th><th>Jadwal</th><th>Aksi</th></tr>
+          </thead>
+          <tbody id="guru-table-body">
+            <tr><td colspan="6" style="text-align:center;color:var(--c-muted);padding:16px">Belum ada data guru</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-success" onclick="saveAllDataToSheets()">☁️ Simpan Semua ke Google Sheets</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= PAGE: FORM SUPERVISI ========= -->
+  <div id="pg-form" class="page" style="display:none">
+
+    <div class="card">
+      <p class="card-title">📌 Data Identitas</p>
+
+      <!-- Pilih Guru (dropdown dengan search) -->
+      <div class="field" style="margin-bottom:12px">
+        <label>Pilih Guru <span style="color:#94a3b8;font-weight:normal;text-transform:none">(ketik untuk mencari)</span></label>
+        <div class="select-guru-wrap">
+          <input type="text" id="sp_cari_guru" placeholder="Ketik nama guru atau pilih dari daftar..." autocomplete="off" oninput="filterGuru()" onfocus="openGuruDropdown()" onblur="closeGuruDropdown()">
+          <div class="guru-dropdown" id="guru-dropdown"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Jenjang Pendidikan</label>
+          <input type="text" id="sp_jenjang" readonly>
+        </div>
+        <div class="field">
+          <label>Tanggal Supervisi</label>
+          <input type="date" id="sp_tanggal">
+        </div>
+        <div class="field col-span-2">
+          <label>Nama Sekolah / Unit Kerja</label>
+          <input type="text" id="sp_unit" readonly>
+        </div>
+        <div class="field">
+          <label>Nama Guru</label>
+          <input type="text" id="sp_nama_guru" placeholder="Nama guru..." oninput="syncTTD()">
+        </div>
+        <div class="field">
+          <label>NIP Guru</label>
+          <input type="text" id="sp_nip_guru" placeholder="NIP/NIK..." oninput="syncTTD()">
+        </div>
+        <div class="field">
+          <label>Nama Supervisor / Kepala Sekolah</label>
+          <input type="text" id="sp_nama_spv" placeholder="Nama supervisor..." oninput="syncTTD()">
+        </div>
+        <div class="field">
+          <label>NIP Supervisor</label>
+          <input type="text" id="sp_nip_spv" placeholder="NIP supervisor..." oninput="syncTTD()">
+        </div>
+        <div class="field">
+          <label>Mata Pelajaran / Kelas</label>
+          <input type="text" id="sp_mapel" placeholder="cth: Matematika / Kelas 5A">
+        </div>
+        <div class="field">
+          <label>Pokok Materi Ajar</label>
+          <input type="text" id="sp_materi" placeholder="Topik materi...">
+        </div>
+        <div class="field col-span-2">
+          <label>Tujuan Pembelajaran</label>
+          <textarea id="sp_tujuan" rows="2" placeholder="Tuliskan tujuan pembelajaran..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">📊 Instrumen Penilaian</p>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th width="5%">No</th>
+            <th>Aspek &amp; Indikator</th>
+            <th width="10%" style="text-align:center">Skor</th>
+          </tr>
+        </thead>
+        <tbody id="instrument-body"></tbody>
+      </table>
+      <div class="result-bar">
+        <div>
+          <div style="font-size:0.68rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:.5px">Persentase</div>
+          <div class="result-pct"><span id="sp_persen">0</span>%</div>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+        </div>
+        <div>
+          <div style="font-size:0.68rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:.5px">Kategori</div>
+          <div style="font-weight:700;font-size:1rem" id="sp_kategori">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">📝 Catatan &amp; Saran</p>
+      <button class="btn btn-purple" onclick="generateAI()" id="ai-btn">✨ Generate Saran Otomatis (AI)</button>
+      <div class="field" style="margin-top:12px">
+        <label>Aspek belum tercapai &amp; saran perbaikan</label>
+        <textarea id="sp_catatan_kurang" rows="4" placeholder="Tuliskan catatan..."></textarea>
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>Aspek sudah baik &amp; saran peningkatan</label>
+        <textarea id="sp_catatan_baik" rows="4" placeholder="Tuliskan catatan..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">✍️ Tanda Tangan</p>
+      <div class="ttd">
+        <div class="ttd-box">
+          <div>Guru yang disupervisi,</div>
+          <div class="ttd-name" id="ttd-guru-nama">(.............................)</div>
+          <div class="ttd-nip" id="ttd-guru-nip">NIP. ..........................</div>
+        </div>
+        <div class="ttd-box">
+          <div>Supervisor / Kepala Sekolah,</div>
+          <div class="ttd-name" id="ttd-spv-nama">Hasbullah Jaini, S.Pd</div>
+          <div class="ttd-nip" id="ttd-spv-nip">NIP. —</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="resetForm()">🔄 Nilai Lagi</button>
+        <button class="btn btn-success" onclick="simpan()" id="save-btn">💾 Simpan ke Google Sheets</button>
+        <button class="btn btn-gray" onclick="cetakForm()">🖨️ Cetak</button>
+        <button class="btn btn-accent" onclick="exportPDF()">📄 Simpan PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= PAGE: DATABASE ========= -->
+  <div id="pg-database" class="page" style="display:none">
+    <div class="card">
+      <p class="card-title">🗄️ Database Hasil Penilaian Supervisi</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <span id="gs-status" class="gs-status loading"><span class="dot"></span> Menghubungkan...</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-success" onclick="ambilDariSheets()">☁️ Ambil dari Google Sheets</button>
+          <button class="btn btn-outline" onclick="renderDB()">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <!-- Import manual panel -->
+      <div id="import-panel" style="display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:16px;margin-bottom:14px">
+        <div style="font-weight:800;color:#15803d;margin-bottom:8px;font-size:0.85rem">📋 Import Manual dari Google Sheets</div>
+        <ol style="font-size:0.82rem;color:#166534;line-height:1.9;margin:0 0 12px;padding-left:18px">
+          <li>Klik <b>"Buka Google Sheets"</b> di bawah</li>
+          <li>Di Google Sheets, pilih semua isi tab DataSupervisi (Ctrl+A)</li>
+          <li>Salin (Ctrl+C) lalu paste di kotak bawah (Ctrl+V)</li>
+          <li>Klik <b>"Proses Data"</b></li>
+        </ol>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <a href="https://docs.google.com/spreadsheets/d/1l2PZa26Ycobu6f4LMDw_OehIs57xFCo33a-IjeHgahs/edit" target="_blank" class="btn btn-primary" style="text-decoration:none">📊 Buka Google Sheets</a>
+          <button class="btn btn-outline" onclick="tutupImport()">✕ Tutup</button>
+        </div>
+        <textarea id="import-raw" rows="5" placeholder="Paste data dari Google Sheets di sini..." style="width:100%;padding:9px;border:1.5px solid #86efac;border-radius:7px;font-family:monospace;font-size:0.75rem;box-sizing:border-box;resize:vertical;outline:none"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-success" onclick="prosesImport()">✅ Proses Data</button>
+          <button class="btn btn-gray" onclick="tutupImport()">Batal</button>
+        </div>
+      </div>
+
+      <div id="db-list"><p style="text-align:center;color:var(--c-muted);padding:20px">Memuat data...</p></div>
+    </div>
+  </div>
+
+  <!-- ========= PAGE: PENGATURAN ========= -->
+  <div id="pg-setting" class="page" style="display:none">
+
+    <!-- Logo Sekolah -->
+    <div class="card">
+      <p class="card-title">🏫 Logo Sekolah</p>
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div id="logo-preview" style="width:96px;height:96px;border-radius:12px;border:2px dashed var(--c-border);display:flex;align-items:center;justify-content:center;background:var(--c-surface2);flex-shrink:0;overflow:hidden">
+          <span style="font-size:0.7rem;color:var(--c-muted);text-align:center;padding:8px">Belum ada logo</span>
+        </div>
+        <div style="flex:1;min-width:180px">
+          <p style="font-size:0.8rem;color:var(--c-muted);margin:0 0 10px">Upload logo sekolah (PNG/JPG, maks 500KB). Logo tersimpan di Google Sheets dan otomatis muncul di semua dokumen cetak.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <label for="logo-input" class="btn btn-primary" style="cursor:pointer;font-size:0.8rem">📁 Pilih File Logo</label>
+            <button class="btn btn-danger" style="font-size:0.8rem" onclick="hapusLogo()">🗑 Hapus Logo</button>
+          </div>
+          <input type="file" id="logo-input" style="display:none" accept="image/png,image/jpeg,image/jpg,image/gif,image/svg+xml" onchange="uploadLogo(event)">
+          <p id="logo-info" style="font-size:0.72rem;color:var(--c-muted);margin:6px 0 0"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Koneksi Google Sheets -->
+    <div class="card">
+      <p class="card-title">🔗 Koneksi Google Sheets</p>
+      <div style="background:var(--c-primary-light);border:1.5px solid #bfdbfe;border-radius:8px;padding:14px;font-size:0.82rem;margin-bottom:12px">
+        <div style="font-weight:800;color:var(--c-primary);margin-bottom:8px">Apps Script URL</div>
+        <div style="font-size:0.72rem;word-break:break-all;background:#fff;padding:6px 8px;border-radius:5px;border:1px solid #bfdbfe;color:#1e40af;font-family:monospace">AKfycbx... (tertanam)</div>
+        <div style="font-weight:800;color:var(--c-primary);margin:8px 0 4px">Spreadsheet ID</div>
+        <div style="font-size:0.72rem;word-break:break-all;background:#fff;padding:6px 8px;border-radius:5px;border:1px solid #bfdbfe;color:#1e40af;font-family:monospace">1l2PZa26...gahs (tertanam)</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="testKoneksi()">🔌 Test Koneksi</button>
+        <button class="btn btn-success" onclick="syncAllData()">☁️ Sync Semua Data</button>
+      </div>
+    </div>
+
+    <!-- Backup & Restore -->
+    <div class="card">
+      <p class="card-title">💾 Backup &amp; Restore</p>
+      <div class="btn-row">
+        <button class="btn btn-gray" onclick="backup()">💾 Backup Data (JSON)</button>
+        <label for="restore-input" class="btn btn-outline" style="cursor:pointer">📥 Restore Data (JSON)</label>
+        <input type="file" id="restore-input" style="display:none" accept=".json" onchange="restore(event)">
+        <button class="btn btn-danger" onclick="resetApp()">⚠️ Reset Aplikasi</button>
+      </div>
+    </div>
+
+    <!-- Tentang -->
+    <div class="card">
+      <p class="card-title">ℹ️ Tentang Aplikasi</p>
+      <div style="font-size:0.82rem;color:var(--c-muted);line-height:1.9">
+        <div><b style="color:var(--c-text)">Aplikasi Supervisi Pembelajaran Mendalam</b></div>
+        <div>Versi 2.0 — dibuat oleh @hasbullah jaini</div>
+        <div>SDN 1 Raja, Kotawaringin Barat</div>
+        <div style="margin-top:8px">Instrumen berisi 13 aspek penilaian supervisi pembelajaran mendalam sesuai standar Kemendikbudristek.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<!-- PRINT AREA -->
+<div id="print-area">
+  <div class="kop">
+    <div class="kop-logo" id="pr-kop-logo"><span style="color:#666;font-size:8pt">LOGO</span></div>
+    <div class="kop-text">
+      <p class="inst" id="pr-inst1">PEMERINTAH KABUPATEN KOTAWARINGIN BARAT</p>
+      <p class="inst" id="pr-inst2">DINAS PENDIDIKAN DAN KEBUDAYAAN</p>
+      <p class="school" id="pr-school">SDN 1 RAJA</p>
+      <p class="addr" id="pr-addr">Jl. Pangeran Diponegoro No.31 Pangkalan Bun</p>
+    </div>
+  </div>
+  <div class="judul-h"><h2>Instrumen Supervisi Pembelajaran Mendalam</h2></div>
+  <table class="tbl-id">
+    <tr><td class="lbl">Jenjang Pendidikan</td><td class="sep">:</td><td id="pr-jenjang"></td></tr>
+    <tr><td class="lbl">Unit Kerja</td><td class="sep">:</td><td id="pr-unit"></td></tr>
+    <tr><td class="lbl">Nama Guru</td><td class="sep">:</td><td id="pr-nama-guru"></td></tr>
+    <tr><td class="lbl">NIP</td><td class="sep">:</td><td id="pr-nip-guru"></td></tr>
+    <tr><td class="lbl">Mata Pelajaran / Kelas</td><td class="sep">:</td><td id="pr-mapel"></td></tr>
+    <tr><td class="lbl">Pokok Materi Ajar</td><td class="sep">:</td><td id="pr-materi"></td></tr>
+    <tr><td class="lbl">Tujuan Pembelajaran</td><td class="sep">:</td><td id="pr-tujuan"></td></tr>
+    <tr><td class="lbl">Tanggal Supervisi</td><td class="sep">:</td><td id="pr-tanggal"></td></tr>
+    <tr><td class="lbl">Nama Supervisor</td><td class="sep">:</td><td id="pr-nama-spv"></td></tr>
+    <tr><td class="lbl">NIP Supervisor</td><td class="sep">:</td><td id="pr-nip-spv"></td></tr>
+  </table>
+  <table class="tbl-instr">
+    <thead><tr><th style="width:5%">No</th><th>Aspek &amp; Indikator Penilaian</th><th style="width:10%;text-align:center">Skor</th></tr></thead>
+    <tbody id="pr-instr-body"></tbody>
+    <tfoot>
+      <tr><td colspan="2" style="border:1px solid #000;background:#e8e8e8;text-align:right;font-weight:bold;padding:4px 6px">PERSENTASE (%)</td><td id="pr-persen" style="border:1px solid #000;background:#e8e8e8;text-align:center;font-weight:bold;padding:4px"></td></tr>
+      <tr><td colspan="2" style="border:1px solid #000;background:#e8e8e8;text-align:right;font-weight:bold;padding:4px 6px">KATEGORI</td><td id="pr-kategori" style="border:1px solid #000;background:#e8e8e8;text-align:center;font-weight:bold;padding:4px"></td></tr>
+    </tfoot>
+  </table>
+  <div class="cat-box"><div class="cat-lbl">14. Aspek pembelajaran yang belum tercapai dan saran perbaikan :</div><div class="cat-isi" id="pr-kurang"></div></div>
+  <div class="cat-box"><div class="cat-lbl">15. Aspek pembelajaran yang telah tercapai dengan baik dan saran peningkatan :</div><div class="cat-isi" id="pr-baik"></div></div>
+  <div class="pr-ttd">
+    <div class="pr-ttd-box">
+      <div>Guru yang disupervisi,</div>
+      <div class="space"></div>
+      <div class="nama" id="pr-ttd-guru"></div>
+      <div class="nip" id="pr-ttd-guru-nip"></div>
+    </div>
+    <div class="pr-ttd-box">
+      <div>Supervisor / Kepala Sekolah,</div>
+      <div class="space"></div>
+      <div class="nama" id="pr-ttd-spv"></div>
+      <div class="nip" id="pr-ttd-spv-nip"></div>
+    </div>
+  </div>
+  <div class="pr-footer" id="pr-footer">Aplikasi Supervisi Pembelajaran Mendalam</div>
+</div>
+
+<!-- Modal Info -->
+<div class="modal-overlay" id="info-modal">
+  <div class="modal-box">
+    <div class="modal-icon">📋</div>
+    <div class="modal-title" id="info-title">Judul Indikator</div>
+    <div class="modal-body" id="info-body">Penjelasan...</div>
+    <button class="btn btn-primary" style="width:100%" onclick="closeModal()">Tutup</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+// ===================== CONFIG =====================
+const GS_URL         = 'https://script.google.com/macros/s/AKfycbztUXGTQjZxRJHfoKFnPOCAJe2XbLYJcFH3TWgTTAZp1trOjQcgjoqrcVlFNa32V0D2/exec';
+const SPREADSHEET_ID = '12uWawaB8C2GD134gPs0Dr4CDCK2e-KoNdpgfxK8TrDQ';
+
+// Keys
+const KEY_SUPERVISI  = 'SP_SUPERVISI_2026';
+const KEY_GURU       = 'SP_GURU_LIST';
+const KEY_SEKOLAH    = 'SP_SEKOLAH_DATA';
+const KEY_KEPSEK     = 'SP_KEPSEK_DATA';
+const KEY_LOGO       = 'SP_LOGO_SEKOLAH';
+
+// ===================== STORAGE HELPERS =====================
+function getStore(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){ return null; } }
+function setStore(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+// ===================== DATA INSTRUMEN =====================
+const instrumen = [
+  { no:1, section:'A. KEGIATAN AWAL', title:'Orientasi yang bermakna', saran:'Gunakan ice breaking singkat yang relevan untuk menarik minat murid.',
+    indicators:[ { label:'Menciptakan suasana awal kondusif', info:'Guru mengatur kondisi fisik dan psikologis kelas sebelum pembelajaran dimulai.' },
+      { label:'Memberi salam & sapaan humanis', info:'Guru membuka pembelajaran dengan salam yang tulus.' },
+      { label:'Mengecek kehadiran & kesiapan', info:'Guru memastikan seluruh murid hadir dan siap belajar.' },
+      { label:'Menumbuhkan fokus & konsentrasi', info:'Guru menggunakan ice breaking atau yel-yel untuk menarik perhatian murid.' }] },
+  { no:2, title:'Apersepsi kontekstual', saran:'Tingkatkan keterkaitan materi dengan fenomena yang sedang tren di lingkungan murid.',
+    indicators:[ { label:'Mengaitkan dengan pengalaman nyata', info:'Guru menghubungkan materi baru dengan pengalaman sehari-hari murid.' },
+      { label:'Menggali pengetahuan awal', info:'Guru mengajukan pertanyaan eksplorasi untuk mengetahui pemahaman awal murid.' }] },
+  { no:3, title:'Motivasi yang menggembirakan', saran:'Berikan apresiasi kecil bagi murid yang aktif di awal.',
+    indicators:[ { label:'Menjelaskan manfaat pembelajaran', info:'Guru menyampaikan mengapa materi penting bagi kehidupan murid.' },
+      { label:'Membangkitkan rasa ingin tahu', info:'Guru menggunakan pertanyaan misterius atau fenomena menarik.' },
+      { label:'Memberikan penguatan positif', info:'Guru memberikan apresiasi verbal dan non-verbal.' },
+      { label:'Menyepakati aturan belajar', info:'Guru bersama murid menetapkan kesepakatan kelas.' }] },
+  { no:4, title:'Acuan pembelajaran', saran:'Pastikan setiap murid memahami kriteria keberhasilan yang harus dicapai.',
+    indicators:[ { label:'Merumuskan tujuan & indikator', info:'Guru menyampaikan tujuan pembelajaran secara jelas.' },
+      { label:'Menyampaikan profil lulusan', info:'Guru mengaitkan materi dengan kompetensi pelajar Pancasila.' },
+      { label:'Menyampaikan skenario', info:'Guru menjelaskan alur kegiatan yang akan dilakukan.' },
+      { label:'Menyampaikan rencana asesmen', info:'Guru menginformasikan bentuk penilaian yang akan digunakan.' }] },
+  { no:5, section:'B. KEGIATAN INTI', title:'Tindakan saling memuliakan', saran:'Budayakan saling mendengarkan saat teman berbicara.',
+    indicators:[ { label:'Guru-Murid', info:'Guru memperlakukan setiap murid dengan hormat dan adil.' },
+      { label:'Murid-Guru', info:'Murid menunjukkan sikap hormat dan santun kepada guru.' },
+      { label:'Murid-Murid', info:'Murid saling menghargai dalam diskusi dan kegiatan kelompok.' }] },
+  { no:6, title:'Pengalaman "Memahami"', saran:'Berikan pertanyaan pemantik yang mendorong murid berpikir kritis.',
+    indicators:[ { label:'Menghubungkan pengetahuan baru', info:'Guru memfasilitasi murid mengaitkan konsep baru dengan pengetahuan lama.' },
+      { label:'Menstimulasi proses berpikir', info:'Guru mengajukan pertanyaan tingkat tinggi.' },
+      { label:'Konteks nyata sehari-hari', info:'Guru menghadirkan contoh dari kehidupan nyata murid.' },
+      { label:'Kebebasan eksplorasi/kolaborasi', info:'Guru memberikan ruang murid untuk mengeksplorasi konsep.' },
+      { label:'Menanamkan nilai moral/etika', info:'Guru mengintegrasikan nilai moral ke dalam penyampaian materi.' },
+      { label:'Pembentukan karakter', info:'Pembelajaran dirancang membentuk karakter murid Profil Pelajar Pancasila.' }] },
+  { no:7, title:'Pengalaman "Mengaplikasi"', saran:'Berikan tantangan nyata atau simulasi masalah yang harus diselesaikan.',
+    indicators:[ { label:'Konsep baru ke pengetahuan lama', info:'Murid menerapkan konsep baru ke pengetahuan yang sudah ada.' },
+      { label:'Penerapan ke situasi nyata', info:'Murid menggunakan konsep dalam konteks kehidupan nyata.' },
+      { label:'Eksplorasi pemahaman lanjut', info:'Guru memfasilitasi murid untuk memperluas pemahaman.' },
+      { label:'Solusi inovatif & kritis', info:'Murid menghasilkan solusi kreatif terhadap masalah.' }] },
+  { no:8, title:'Pengalaman "Merefleksi"', saran:'Lakukan sesi refleksi agar murid berani mengungkapkan hambatan belajar.',
+    indicators:[ { label:'Motivasi belajar cara belajar', info:'Guru mendorong murid memahami strategi belajar yang efektif.' },
+      { label:'Evaluasi diri tujuan belajar', info:'Murid menilai sejauh mana mereka mencapai tujuan pembelajaran.' },
+      { label:'Menerapkan strategi berpikir', info:'Guru mengajarkan penggunaan strategi kognitif tertentu.' },
+      { label:'Metakognisi', info:'Murid diajak berpikir tentang proses berpikirnya sendiri.' },
+      { label:'Meregulasi emosi', info:'Guru membantu murid mengelola emosi selama proses belajar.' }] },
+  { no:9, title:'Kerangka pembelajaran mendalam', saran:'Manfaatkan teknologi interaktif seperti video atau platform kolaboratif.',
+    indicators:[ { label:'Pedagogis sesuai materi', info:'Pendekatan dan metode pembelajaran sesuai karakteristik materi.' },
+      { label:'Integrasi fisik & virtual', info:'Guru memadukan aktivitas tatap muka dengan sumber daya digital.' },
+      { label:'Kemitraan dinamis', info:'Guru berperan sebagai mitra belajar yang dinamis.' },
+      { label:'Pemanfaatan digital interaktif', info:'Guru memanfaatkan teknologi digital secara aktif.' }] },
+  { no:10, title:'Asesmen formatif', saran:'Gunakan teknik asesmen antar teman untuk meningkatkan keterlibatan murid.',
+    indicators:[ { label:'Awal pembelajaran', info:'Guru melakukan asesmen diagnostik di awal sesi.' },
+      { label:'Proses pembelajaran', info:'Guru memantau perkembangan pemahaman murid secara berkelanjutan.' },
+      { label:'Akhir pembelajaran', info:'Guru melakukan penilaian di akhir sesi untuk mengukur ketercapaian.' }] },
+  { no:11, section:'C. KEGIATAN PENUTUP', title:'Menyimpulkan pembelajaran', saran:'Biarkan murid yang merangkum poin penting hari ini.',
+    indicators:[ { label:'Disusun bersama murid', info:'Kesimpulan dirumuskan bersama murid melalui tanya jawab.' },
+      { label:'Bimbingan guru (tidak dominan)', info:'Guru berperan sebagai fasilitator dalam penyusunan kesimpulan.' },
+      { label:'Ringkas, runtut, sistematis', info:'Kesimpulan mencakup poin-poin utama secara terorganisir.' },
+      { label:'Dicatat/ditampilkan di media', info:'Kesimpulan ditulis atau ditampilkan untuk dokumentasi.' }] },
+  { no:12, title:'Umpan balik konstruktif', saran:'Berikan umpan balik yang spesifik terhadap hasil karya murid.',
+    indicators:[ { label:'Mengajak berpikir ulang', info:'Guru memberikan umpan balik yang mendorong murid mereview pemahamannya.' },
+      { label:'Memberikan apresiasi', info:'Guru mengakui dan menghargai setiap usaha murid.' },
+      { label:'Saran perbaikan', info:'Guru memberikan masukan yang jelas dan dapat ditindaklanjuti.' },
+      { label:'Penguatan', info:'Guru menegaskan kembali konsep-konsep kunci yang telah dipelajari.' }] },
+  { no:13, title:'Pesan bermakna & doa', saran:'Tutup kelas dengan kalimat motivasi atau nilai moral untuk diterapkan.',
+    indicators:[ { label:'Terlibat rencana berikutnya', info:'Guru menyampaikan gambaran singkat pembelajaran yang akan datang.' },
+      { label:'Kaitan dengan sikap/karakter', info:'Guru menghubungkan materi dengan nilai-nilai karakter.' },
+      { label:'Berdoa sesuai keyakinan', info:'Guru menutup pembelajaran dengan doa bersama.' },
+      { label:'Ungkapan syukur & salam', info:'Guru mengakhiri sesi dengan ekspresi syukur dan salam.' }] }
+];
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', function() {
+  buildInstrumentTable();
+  loadLogo();
+  loadDataIsian();
+  renderDashboard();
+  renderDB();
+  syncToSheets_attempt();
+});
+
+function buildInstrumentTable() {
+  const body = document.getElementById('instrument-body');
+  body.innerHTML = '';
+  instrumen.forEach((item, idx) => {
+    if (item.section) {
+      body.innerHTML += `<tr class="section-row"><td colspan="3">${item.section}</td></tr>`;
+    }
+    let inds = item.indicators.map((ind, i) => {
+      const chkId = `chk_${idx}_${i}`;
+      const infoBtn = ind.info ? `<button type="button" class="info-btn" onclick="showInfo(event,'${escQ(ind.label)}','${escQ(ind.info)}')">ⓘ</button>` : '';
+      return `<li class="ind-item"><label for="${chkId}" style="display:flex;align-items:center;gap:8px;cursor:pointer;width:100%"><input type="checkbox" id="${chkId}" class="sp-chk" data-idx="${idx}" onchange="hitungSkor()"> <span style="flex:1">${ind.label}</span>${infoBtn}</label></li>`;
+    }).join('');
+    body.innerHTML += `<tr>
+      <td align="center" style="font-weight:700;color:var(--c-muted)">${item.no}</td>
+      <td><b>${item.title}</b><ul class="ind-list">${inds}</ul></td>
+      <td align="center"><span class="score-badge" id="score-${idx}">0</span></td>
+    </tr>`;
+  });
+}
+
+function escQ(s) { return (s||'').replace(/'/g,"\\'").replace(/\n/g,' '); }
+
+// ===================== SKOR =====================
+function hitungSkor() {
+  let total = 0, maxTotal = 52;
+  instrumen.forEach((item, idx) => {
+    let count = 0;
+    document.querySelectorAll(`.sp-chk[data-idx="${idx}"]`).forEach(c => { if (c.checked) count++; });
+    let skor = Math.min(count, 4);
+    const badge = document.getElementById(`score-${idx}`);
+    if (badge) { badge.innerText = skor; badge.className = 'score-badge' + (skor >= 3 ? ' high' : skor >= 2 ? ' mid' : skor > 0 ? ' low' : ''); }
+    total += skor;
+  });
+  const persen = (total / maxTotal) * 100;
+  document.getElementById('sp_persen').innerText = persen.toFixed(1);
+  document.getElementById('progress-bar').style.width = persen + '%';
+  let kat = 'Kurang Sekali';
+  if      (persen >= 86) kat = 'Baik Sekali';
+  else if (persen >= 71) kat = 'Baik';
+  else if (persen >= 56) kat = 'Cukup';
+  else if (persen >= 41) kat = 'Kurang';
+  document.getElementById('sp_kategori').innerText = kat;
+}
+
+// ===================== SYNC TTD =====================
+function syncTTD() {
+  const ng   = document.getElementById('sp_nama_guru').value;
+  const nipg = document.getElementById('sp_nip_guru').value;
+  const ns   = document.getElementById('sp_nama_spv').value;
+  const nips = document.getElementById('sp_nip_spv').value;
+  document.getElementById('ttd-guru-nama').innerText = ng   || '(............................)';
+  document.getElementById('ttd-guru-nip').innerText  = 'NIP. ' + (nipg || '..........................');
+  document.getElementById('ttd-spv-nama').innerText  = ns   || '—';
+  document.getElementById('ttd-spv-nip').innerText   = 'NIP. ' + (nips || '—');
+}
+window.syncTTD = syncTTD;
+
+// ===================== GURU DROPDOWN =====================
+let guruDropdownOpen = false;
+
+function getGuruList() { return getStore(KEY_GURU) || []; }
+
+function populateGuruDropdown(filter) {
+  const gurus = getGuruList();
+  const dropdown = document.getElementById('guru-dropdown');
+  const term = (filter || '').toLowerCase();
+  const filtered = term ? gurus.filter(g => g.nama.toLowerCase().includes(term)) : gurus;
+  if (filtered.length === 0) {
+    dropdown.innerHTML = `<div class="guru-dropdown-item" style="color:var(--c-muted)">Tidak ada guru ditemukan</div>`;
+  } else {
+    dropdown.innerHTML = filtered.map((g, i) => `<div class="guru-dropdown-item" onmousedown="pilihGuru(${gurus.indexOf(g)})">${g.nama} — <small>${g.mapel || ''}</small></div>`).join('');
+  }
+}
+
+window.filterGuru = function() {
+  const val = document.getElementById('sp_cari_guru').value;
+  populateGuruDropdown(val);
+  document.getElementById('guru-dropdown').classList.add('open');
+};
+
+window.openGuruDropdown = function() {
+  populateGuruDropdown(document.getElementById('sp_cari_guru').value);
+  document.getElementById('guru-dropdown').classList.add('open');
+};
+
+window.closeGuruDropdown = function() {
+  setTimeout(() => document.getElementById('guru-dropdown').classList.remove('open'), 200);
+};
+
+window.pilihGuru = function(idx) {
+  const gurus = getGuruList();
+  const g = gurus[idx];
+  if (!g) return;
+  const sekolah = getStore(KEY_SEKOLAH) || {};
+  const kepsek  = getStore(KEY_KEPSEK)  || {};
+  document.getElementById('sp_cari_guru').value = g.nama;
+  document.getElementById('sp_nama_guru').value  = g.nama;
+  document.getElementById('sp_nip_guru').value   = g.nip || '';
+  document.getElementById('sp_mapel').value      = g.mapel || '';
+  document.getElementById('sp_jenjang').value    = sekolah.jenjang || 'SD';
+  document.getElementById('sp_unit').value       = sekolah.nama_sekolah || '';
+  document.getElementById('sp_nama_spv').value   = kepsek.nama_kepsek || '';
+  document.getElementById('sp_nip_spv').value    = kepsek.nip_kepsek  || '';
+  if (g.jadwal) document.getElementById('sp_tanggal').value = normalizeTgl(g.jadwal);
+  syncTTD();
+  document.getElementById('guru-dropdown').classList.remove('open');
+  toast('✅ Data guru ' + g.nama + ' dimuat!', 'success');
+};
+
+// ===================== DATA ISIAN =====================
+function loadDataIsian() {
+  const sekolah = getStore(KEY_SEKOLAH) || {};
+  const kepsek  = getStore(KEY_KEPSEK)  || {};
+  // Fill forms
+  ['nama_sekolah','jenjang','npsn','alamat','kabupaten','provinsi','website','tapel'].forEach(k => {
+    const el = document.getElementById('d_' + k);
+    if (el && sekolah[k] !== undefined) el.value = sekolah[k];
+  });
+  ['nama_kepsek','nip_kepsek','sk_kepsek'].forEach(k => {
+    const el = document.getElementById('d_' + k);
+    if (el && kepsek[k] !== undefined) el.value = kepsek[k];
+  });
+  renderGuruTable();
+  renderDashboard();
+}
+
+window.saveDataSekolah = function() {
+  const data = {};
+  ['nama_sekolah','jenjang','npsn','alamat','kabupaten','provinsi','website','tapel'].forEach(k => {
+    const el = document.getElementById('d_' + k);
+    if (el) data[k] = el.value;
+  });
+  setStore(KEY_SEKOLAH, data);
+  updateHeaderSubtitle();
+  renderDashboard();
+  sendDataToSheets({ type: 'sekolah', data });
+  toast('✅ Data sekolah berhasil disimpan!', 'success');
+};
+
+window.saveDataKepsek = function() {
+  const data = {};
+  ['nama_kepsek','nip_kepsek','sk_kepsek'].forEach(k => {
+    const el = document.getElementById('d_' + k);
+    if (el) data[k] = el.value;
+  });
+  setStore(KEY_KEPSEK, data);
+  renderDashboard();
+  sendDataToSheets({ type: 'kepsek', data });
+  toast('✅ Data kepala sekolah berhasil disimpan!', 'success');
+};
+
+function updateHeaderSubtitle() {
+  const sekolah = getStore(KEY_SEKOLAH) || {};
+  if (sekolah.nama_sekolah) {
+    document.getElementById('header-subtitle').textContent = sekolah.nama_sekolah + ' — Instrumen Penilaian Supervisi Guru';
+  }
+  const webEl = document.getElementById('header-web-link');
+  if (webEl && sekolah.website) {
+    const url = sekolah.website.startsWith('http') ? sekolah.website : 'https://' + sekolah.website;
+    webEl.href = url;
+    webEl.textContent = '🌐 ' + sekolah.website;
+  }
+}
+
+// ===================== GURU CRUD =====================
+window.tambahGuru = function() {
+  const nama   = document.getElementById('g_nama').value.trim();
+  const nip    = document.getElementById('g_nip').value.trim();
+  const mapel  = document.getElementById('g_mapel').value.trim();
+  const jadwal = document.getElementById('g_jadwal').value;
+  const kontak = document.getElementById('g_kontak').value.trim();
+  const editIdx = parseInt(document.getElementById('g_edit_idx').value);
+
+  if (!nama) { toast('⚠️ Nama guru wajib diisi!', 'error'); return; }
+
+  let gurus = getGuruList();
+  const entry = { nama, nip, mapel, jadwal, kontak };
+
+  if (editIdx >= 0) {
+    gurus[editIdx] = entry;
+    toast('✅ Data guru diperbarui!', 'success');
+  } else {
+    gurus.push(entry);
+    toast('✅ Guru ditambahkan!', 'success');
+  }
+  setStore(KEY_GURU, gurus);
+  resetFormGuru();
+  renderGuruTable();
+  renderDashboard();
+  sendDataToSheets({ type: 'guru', data: gurus });
+};
+
+window.resetFormGuru = function() {
+  ['g_nama','g_nip','g_mapel','g_kontak'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('g_jadwal').value = '';
+  document.getElementById('g_edit_idx').value = '-1';
+  document.getElementById('form-guru-wrapper').querySelector('.data-section-header').textContent = 'Tambah / Edit Data Guru';
+};
+
+window.editGuru = function(idx) {
+  const gurus = getGuruList();
+  const g = gurus[idx];
+  if (!g) return;
+  document.getElementById('g_nama').value   = g.nama || '';
+  document.getElementById('g_nip').value    = g.nip  || '';
+  document.getElementById('g_mapel').value  = g.mapel || '';
+  document.getElementById('g_jadwal').value = g.jadwal || '';
+  document.getElementById('g_kontak').value = g.kontak || '';
+  document.getElementById('g_edit_idx').value = idx;
+  document.getElementById('form-guru-wrapper').querySelector('.data-section-header').textContent = 'Edit Data Guru: ' + g.nama;
+  showPage('pg-data');
+  document.getElementById('form-guru-wrapper').scrollIntoView({ behavior: 'smooth' });
+};
+
+window.hapusGuru = function(idx) {
+  if (!confirm('Hapus guru ini dari daftar?')) return;
+  let gurus = getGuruList();
+  gurus.splice(idx, 1);
+  setStore(KEY_GURU, gurus);
+  renderGuruTable();
+  renderDashboard();
+  sendDataToSheets({ type: 'guru', data: gurus });
+  toast('🗑 Guru dihapus.', 'info');
+};
+
+function renderGuruTable() {
+  const gurus = getGuruList();
+  const body = document.getElementById('guru-table-body');
+  if (gurus.length === 0) {
+    body.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--c-muted);padding:16px">Belum ada data guru</td></tr>`;
+    return;
+  }
+  body.innerHTML = gurus.map((g, i) => `<tr>
+    <td>${i + 1}</td>
+    <td><b>${g.nama}</b></td>
+    <td>${g.nip || '—'}</td>
+    <td>${g.mapel || '—'}</td>
+    <td>${g.jadwal ? fmtTgl(g.jadwal) : '—'}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-primary btn-sm" onclick="editGuru(${i})">✏️ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="hapusGuru(${i})">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+// ===================== DASHBOARD =====================
+function renderDashboard() {
+  const gurus     = getGuruList();
+  const supervisi = getStore(KEY_SUPERVISI) || [];
+  const sekolah   = getStore(KEY_SEKOLAH) || {};
+  const kepsek    = getStore(KEY_KEPSEK)  || {};
+
+  // Stats
+  const supervisedNames = new Set(supervisi.map(s => s.nama));
+  const done    = gurus.filter(g => supervisedNames.has(g.nama)).length;
+  const pending = gurus.length - done;
+  const avgPct  = supervisi.length > 0 ? (supervisi.reduce((a, s) => a + parseFloat(s.persen || 0), 0) / supervisi.length).toFixed(1) : 0;
+
+  document.getElementById('ds-guru').textContent    = gurus.length;
+  document.getElementById('ds-done').textContent    = done;
+  document.getElementById('ds-pending').textContent = pending;
+  document.getElementById('ds-avg').textContent     = avgPct + '%';
+
+  // Header stats
+  document.getElementById('hstat-guru').textContent = gurus.length;
+  document.getElementById('hstat-done').textContent = done;
+  const pctDone = gurus.length > 0 ? Math.round((done / gurus.length) * 100) : 0;
+  document.getElementById('hstat-pct').textContent  = pctDone + '%';
+
+  // Donut
+  updateDonut(done, pending, gurus.length);
+  document.getElementById('leg-done').textContent    = done;
+  document.getElementById('leg-pending').textContent = pending;
+  document.getElementById('leg-total').textContent   = gurus.length;
+
+  // Data sekolah panel
+  const si = document.getElementById('dash-sekolah-info');
+  si.innerHTML = `
+    <div style="line-height:2"><b style="color:var(--c-text)">${sekolah.nama_sekolah || '—'}</b></div>
+    <div>Jenjang: ${sekolah.jenjang || '—'} &nbsp;|&nbsp; NPSN: ${sekolah.npsn || '—'}</div>
+    <div>${sekolah.alamat || '—'}</div>
+    <div>${sekolah.kabupaten || '—'}, ${sekolah.provinsi || '—'}</div>
+    ${sekolah.website ? `<div><a href="https://${sekolah.website}" style="color:var(--c-primary)">${sekolah.website}</a></div>` : ''}
+    <div>Tahun Pelajaran: <b>${sekolah.tapel || '—'}</b></div>
+  `;
+
+  const ki = document.getElementById('dash-kepsek-info');
+  ki.innerHTML = `
+    <div><b style="color:var(--c-text)">${kepsek.nama_kepsek || '—'}</b></div>
+    <div>NIP: ${kepsek.nip_kepsek || '—'}</div>
+    <div>${kepsek.sk_kepsek || ''}</div>
+  `;
+
+  // Jadwal table
+  const tbody = document.getElementById('dash-jadwal-body');
+  if (gurus.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--c-muted);padding:16px">Belum ada data guru</td></tr>`;
+  } else {
+    tbody.innerHTML = gurus.map((g, i) => {
+      const sudah = supervisedNames.has(g.nama);
+      const hasilSpv = supervisi.filter(s => s.nama === g.nama).pop();
+      return `<tr>
+        <td>${i + 1}</td>
+        <td><b>${g.nama}</b></td>
+        <td>${g.mapel || '—'}</td>
+        <td>${g.jadwal ? fmtTgl(g.jadwal) : '—'}</td>
+        <td>
+          ${sudah ? `<span class="status-done">✅ Selesai</span>${hasilSpv ? ' <small style="color:var(--c-muted)">' + hasilSpv.persen + '%</small>' : ''}` : '<span class="status-pending">⏳ Belum</span>'}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Logo
+  loadLogo();
+  updateHeaderSubtitle();
+}
+
+function updateDonut(done, pending, total) {
+  const circ = 2 * Math.PI * 38; // ~238.76
+  const pDone    = total > 0 ? (done / total) * circ : 0;
+  const pPending = total > 0 ? (pending / total) * circ : 0;
+  const donutDone = document.getElementById('donut-done');
+  const donutPend = document.getElementById('donut-pending');
+  if (donutDone) donutDone.setAttribute('stroke-dasharray', `${pDone.toFixed(1)} ${(circ - pDone).toFixed(1)}`);
+  if (donutPend) {
+    donutPend.setAttribute('stroke-dasharray', `${pPending.toFixed(1)} ${(circ - pPending).toFixed(1)}`);
+    donutPend.style.strokeDashoffset = `-${pDone.toFixed(1)}`;
+    donutPend.setAttribute('transform', `rotate(-90 50 50)`);
+    // Use stroke-dashoffset offset for second arc
+    donutPend.style.strokeDashoffset = `-${pDone.toFixed(1)}`;
+  }
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const el = document.getElementById('donut-pct');
+  if (el) el.textContent = pct + '%';
+}
+
+// ===================== LOGO =====================
+function loadLogo() {
+  const logo = getStore(KEY_LOGO);
+  const imgTag = logo ? `<img src="${logo}" style="width:100%;height:100%;object-fit:contain">` : '';
+
+  // Setting preview
+  const prev = document.getElementById('logo-preview');
+  if (prev) prev.innerHTML = logo ? imgTag : `<span style="font-size:0.7rem;color:var(--c-muted);text-align:center;padding:8px">Belum ada logo</span>`;
+  const info = document.getElementById('logo-info');
+  if (info) info.textContent = logo ? `✅ Logo tersimpan (~${Math.round(logo.length * 0.75 / 1024)} KB)` : '';
+
+  // Header logo
+  const hLogo = document.getElementById('header-logo-box');
+  if (hLogo) hLogo.innerHTML = logo ? `<img src="${logo}" style="width:100%;height:100%;object-fit:contain">` : `<span style="color:rgba(255,255,255,0.5);font-size:0.65rem;text-align:center">LOGO</span>`;
+
+  // Dashboard
+  const dLogo = document.getElementById('dash-logo');
+  if (dLogo) dLogo.innerHTML = logo ? imgTag : `<span style="font-size:0.65rem;color:var(--c-muted)">LOGO</span>`;
+}
+
+window.uploadLogo = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 600 * 1024) { toast('❌ File terlalu besar! Maks 500KB', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    setStore(KEY_LOGO, ev.target.result);
+    loadLogo();
+    sendDataToSheets({ type: 'logo', data: ev.target.result });
+    toast('✅ Logo berhasil disimpan!', 'success');
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+};
+
+window.hapusLogo = function() {
+  if (confirm('Hapus logo sekolah?')) {
+    localStorage.removeItem(KEY_LOGO);
+    loadLogo();
+    toast('Logo dihapus.', 'info');
+  }
+};
+
+function getLogoHTML(size) {
+  const logo = getStore(KEY_LOGO);
+  if (logo) return `<img src="${logo}" style="width:${size}px;height:${size}px;object-fit:contain;display:block">`;
+  return `<div style="width:${size}px;height:${size}px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#666">LOGO</div>`;
+}
+
+// ===================== FORM SUPERVISI =====================
+window.resetForm = function(silent) {
+  if (!silent && !confirm('Bersihkan form untuk penilaian baru?')) return;
+  ['sp_nama_guru','sp_nip_guru','sp_mapel','sp_materi','sp_tujuan','sp_catatan_kurang','sp_catatan_baik','sp_cari_guru'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.querySelectorAll('.sp-chk').forEach(c => c.checked = false);
+  hitungSkor(); syncTTD();
+};
+
+function getPayload() {
+  return {
+    id       : Date.now(),
+    jenjang  : document.getElementById('sp_jenjang').value,
+    unit     : document.getElementById('sp_unit').value,
+    nama     : document.getElementById('sp_nama_guru').value,
+    nip      : document.getElementById('sp_nip_guru').value,
+    nama_spv : document.getElementById('sp_nama_spv').value,
+    nip_spv  : document.getElementById('sp_nip_spv').value,
+    mapel    : document.getElementById('sp_mapel').value,
+    materi   : document.getElementById('sp_materi').value,
+    tujuan   : document.getElementById('sp_tujuan').value,
+    tgl      : document.getElementById('sp_tanggal').value,
+    persen   : document.getElementById('sp_persen').innerText,
+    kat      : document.getElementById('sp_kategori').innerText,
+    kurang   : document.getElementById('sp_catatan_kurang').value,
+    baik     : document.getElementById('sp_catatan_baik').value,
+    ceklis   : Array.from(document.querySelectorAll('.sp-chk')).map(c => c.checked)
+  };
+}
+
+window.simpan = async function() {
+  const nama = document.getElementById('sp_nama_guru').value;
+  const tgl  = document.getElementById('sp_tanggal').value;
+  if (!nama || !tgl) { toast('⚠️ Nama Guru & Tanggal wajib diisi!', 'error'); return; }
+
+  const payload = getPayload();
+  let db = getStore(KEY_SUPERVISI) || [];
+  db.push(payload);
+  setStore(KEY_SUPERVISI, db);
+
+  const btn = document.getElementById('save-btn');
+  btn.innerHTML = '<span class="spinner"></span> Menyimpan...';
+  btn.disabled = true;
+
+  const kirim = await gsPostAsync({ type: 'supervisi', data: payload });
+  if (kirim) toast('✅ Berhasil disimpan ke Google Sheets & lokal!', 'success');
+  else toast('💾 Disimpan lokal. Gagal kirim ke Sheets.', 'info');
+
+  btn.innerHTML = '💾 Simpan ke Google Sheets';
+  btn.disabled = false;
+  renderDashboard();
+  setTimeout(() => resetForm(true), 800);
+};
+
+// ===================== AI GENERATE =====================
+window.generateAI = async function() {
+  let tercapai = [], belum = [];
+  instrumen.forEach((item, idx) => {
+    const badge = document.getElementById(`score-${idx}`);
+    const score = badge ? parseInt(badge.innerText) : 0;
+    if (score >= 3) tercapai.push(item); else belum.push(item);
+  });
+  const namaGuru = document.getElementById('sp_nama_guru').value || 'guru';
+  const mapel    = document.getElementById('sp_mapel').value || '';
+  const persen   = document.getElementById('sp_persen').innerText;
+  const kat      = document.getElementById('sp_kategori').innerText;
+  const btn = document.getElementById('ai-btn');
+  btn.innerHTML = '<span class="spinner"></span> Generating...';
+  btn.disabled = true;
+  try {
+    const prompt = `Kamu adalah supervisor pendidikan profesional. Tulis catatan supervisi dalam Bahasa Indonesia yang santun, spesifik, dan konstruktif.
+Data: Guru: ${namaGuru}, Mapel: ${mapel}, Persentase: ${persen}% (${kat})
+Belum tercapai: ${belum.map(i=>i.title).join(', ') || 'tidak ada'}
+Sudah baik: ${tercapai.map(i=>i.title).join(', ') || 'tidak ada'}
+Buat 2 paragraf (3-4 kalimat masing-masing):
+KURANG: [catatan aspek belum tercapai & saran perbaikan]
+BAIK: [catatan aspek sudah baik & saran peningkatan]`;
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const km = text.match(/KURANG:\s*([\s\S]*?)(?=BAIK:|$)/i);
+    const bm = text.match(/BAIK:\s*([\s\S]*?)$/i);
+    if (km) document.getElementById('sp_catatan_kurang').value = km[1].trim();
+    if (bm) document.getElementById('sp_catatan_baik').value   = bm[1].trim();
+    toast('✨ Saran berhasil digenerate!', 'success');
+  } catch(e) {
+    if (belum.length > 0) document.getElementById('sp_catatan_kurang').value = 'Aspek yang perlu ditingkatkan: ' + belum.map(i=>i.title).slice(0,2).join(', ') + '. ' + (belum[0]?.saran || '');
+    if (tercapai.length > 0) document.getElementById('sp_catatan_baik').value = 'Aspek yang sudah baik: ' + tercapai.map(i=>i.title).slice(0,2).join(', ') + '. Pertahankan performa ini.';
+    toast('⚠️ AI tidak tersedia, menggunakan template.', 'info');
+  }
+  btn.innerHTML = '✨ Generate Saran Otomatis (AI)';
+  btn.disabled = false;
+};
+
+// ===================== BUILD LAPORAN HTML =====================
+function buildLaporanHTML(record) {
+  // If record passed, use record values; else use form values
+  const v = key => {
+    if (record) return record[key] || '';
+    const el = document.getElementById(key === 'tgl' ? 'sp_tanggal' : 'sp_' + key);
+    return el ? (el.value || el.innerText || '') : '';
+  };
+  const tglRaw = record ? record.tgl : document.getElementById('sp_tanggal').value;
+  let tglIndo = tglRaw;
+  if (tglRaw) {
+    const normalized = normalizeTgl(tglRaw);
+    const raw = (typeof normalized === 'string' && (normalized.includes('T') || normalized.includes(' '))) ? normalized : normalized + 'T00:00:00';
+    const d = new Date(raw);
+    if (!isNaN(d.getTime())) {
+      const bln = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      tglIndo = `${d.getDate()} ${bln[d.getMonth()]} ${d.getFullYear()}`;
+    }
+  }
+  const namaGuru = record ? record.nama    : document.getElementById('sp_nama_guru').value;
+  const nipGuru  = record ? record.nip     : document.getElementById('sp_nip_guru').value;
+  const namaSpv  = record ? record.nama_spv : document.getElementById('sp_nama_spv').value;
+  const nipSpv   = record ? record.nip_spv  : document.getElementById('sp_nip_spv').value;
+  const unit     = record ? record.unit    : document.getElementById('sp_unit').value;
+  const mapel    = record ? record.mapel   : document.getElementById('sp_mapel').value;
+  const materi   = record ? record.materi  : document.getElementById('sp_materi').value;
+  const tujuan   = record ? record.tujuan  : document.getElementById('sp_tujuan').value;
+  const jenjang  = record ? record.jenjang : document.getElementById('sp_jenjang').value;
+  const persen   = record ? record.persen  : document.getElementById('sp_persen').innerText;
+  const kategori = record ? record.kat     : document.getElementById('sp_kategori').innerText;
+  const kurang   = (record ? record.kurang : document.getElementById('sp_catatan_kurang').value).replace(/\n/g,'<br>');
+  const baik     = (record ? record.baik   : document.getElementById('sp_catatan_baik').value).replace(/\n/g,'<br>');
+
+  let instrRows = '';
+  instrumen.forEach((item, idx) => {
+    if (item.section) instrRows += `<tr><td colspan="3" style="background:#d0d0d0;font-weight:bold;text-align:center;padding:5px;border:1px solid #000">${item.section}</td></tr>`;
+    let skor = 0;
+    if (record && record.ceklis) {
+      let count = 0;
+      record.ceklis.forEach((v, ci) => {
+        if (document.querySelectorAll(`.sp-chk[data-idx="${idx}"]`).length > 0) return; // use DOM if available
+      });
+      // Reconstruct from ceklis
+      let globalIdx = 0;
+      instrumen.forEach((it2, i2) => {
+        let cnt = 0;
+        it2.indicators.forEach((ind, j) => {
+          if (record.ceklis[globalIdx]) cnt++;
+          globalIdx++;
+        });
+        if (i2 === idx) skor = Math.min(cnt, 4);
+      });
+    } else {
+      const badge = document.getElementById(`score-${idx}`);
+      skor = badge ? parseInt(badge.innerText) : 0;
+    }
+    const indList = item.indicators.map(ind => `<li style="margin:1px 0">${typeof ind === 'object' ? ind.label : ind}</li>`).join('');
+    instrRows += `<tr>
+      <td style="border:1px solid #000;text-align:center;padding:4px 6px;width:5%">${item.no}</td>
+      <td style="border:1px solid #000;padding:4px 8px"><strong>${item.title}</strong><ol style="margin:3px 0 0;padding-left:16px;font-size:9.5pt">${indList}</ol></td>
+      <td style="border:1px solid #000;text-align:center;padding:4px;width:10%;font-weight:bold">${skor}</td>
+    </tr>`;
+  });
+
+  const sekolah = getStore(KEY_SEKOLAH) || {};
+
+  return `<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<title>Supervisi PM - ${namaGuru}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:794px;margin:0;padding:0;background:#fff}
+body{font-family:'Times New Roman',serif;font-size:11pt;color:#000;background:#fff;padding:18mm 20mm}
+#wrap{width:100%}
+.kop{display:flex;align-items:center;border-bottom:3px solid #000;padding-bottom:8px;margin-bottom:14px}
+.kop-logo{width:72px;height:72px;flex-shrink:0;margin-right:14px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc}
+.kop-logo img{width:100%;height:100%;object-fit:contain}
+.kop-text{flex:1;text-align:center}
+.kop-text .inst{font-size:9pt;margin-bottom:1px;font-weight:normal}
+.kop-text .sch{font-size:15pt;font-weight:bold;text-transform:uppercase;margin:2px 0}
+.kop-text .addr{font-size:8.5pt;margin-bottom:1px}
+.kop-text .web{font-size:8.5pt;color:#1e40af;text-decoration:none}
+.judul{text-align:center;margin:14px 0 12px}
+.judul h2{font-size:13pt;font-weight:bold;text-transform:uppercase;text-decoration:underline}
+table.id{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10.5pt}
+table.id td{padding:2px 4px;vertical-align:top}
+table.instr{width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:10px}
+table.instr thead th{background:#e8e8e8;border:1px solid #000;text-align:center;padding:5px;font-weight:bold}
+.cat{margin-bottom:10px;font-size:10.5pt}
+.cat .cat-l{font-weight:bold;margin-bottom:3px}
+.cat .cat-i{border:1px solid #000;min-height:55px;padding:6px 8px;font-size:10pt;line-height:1.5}
+.ttd{display:flex;justify-content:space-between;margin-top:22px;font-size:10.5pt}
+.ttd-b{text-align:center;width:44%}
+.ttd-b .sp{height:62px}
+.ttd-b .nm{font-weight:bold;border-top:1px solid #000;padding-top:3px;display:inline-block;min-width:160px}
+.ttd-b .np{font-size:10pt;margin-top:2px}
+.ft{margin-top:16px;border-top:1px solid #ccc;padding-top:5px;text-align:center;font-size:8.5pt;color:#555}
+@media print{@page{size:A4 portrait;margin:0}body{padding:1.5cm 1.8cm}}
+</style></head><body>
+<div id="wrap">
+<div class="kop">
+  <div class="kop-logo">${getLogoHTML(70)}</div>
+  <div class="kop-text">
+    <p class="inst">${sekolah.kabupaten ? 'PEMERINTAH ' + (sekolah.kabupaten||'').toUpperCase() : 'PEMERINTAH KABUPATEN KOTAWARINGIN BARAT'}</p>
+    <p class="inst">DINAS PENDIDIKAN DAN KEBUDAYAAN</p>
+    <p class="sch">${unit ? unit.toUpperCase() : (sekolah.nama_sekolah||'SDN 1 RAJA').toUpperCase()}</p>
+    <p class="addr">${sekolah.alamat || 'Jl. Pangeran Diponegoro No.31 Pangkalan Bun'}</p>
+    <a class="web" href="${sekolah.website ? 'https://'+sekolah.website : 'https://www.sdn1raja.sch.id'}">${sekolah.website || 'www.sdn1raja.sch.id'}</a>
+  </div>
+</div>
+<div class="judul"><h2>Instrumen Supervisi Pembelajaran Mendalam</h2></div>
+<table class="id">
+  <tr><td style="width:36%">Jenjang Pendidikan</td><td style="width:2%;text-align:center">:</td><td>${jenjang}</td></tr>
+  <tr><td>Unit Kerja</td><td style="text-align:center">:</td><td>${unit}</td></tr>
+  <tr><td>Nama Guru</td><td style="text-align:center">:</td><td>${namaGuru}</td></tr>
+  <tr><td>NIP</td><td style="text-align:center">:</td><td>${nipGuru}</td></tr>
+  <tr><td>Mata Pelajaran / Kelas</td><td style="text-align:center">:</td><td>${mapel}</td></tr>
+  <tr><td>Pokok Materi Ajar</td><td style="text-align:center">:</td><td>${materi}</td></tr>
+  <tr><td>Tujuan Pembelajaran</td><td style="text-align:center">:</td><td>${tujuan}</td></tr>
+  <tr><td>Tanggal Supervisi</td><td style="text-align:center">:</td><td>${tglIndo}</td></tr>
+  <tr><td>Nama Supervisor</td><td style="text-align:center">:</td><td>${namaSpv}</td></tr>
+  <tr><td>NIP Supervisor</td><td style="text-align:center">:</td><td>${nipSpv}</td></tr>
+</table>
+<table class="instr">
+  <thead><tr><th style="width:5%">No</th><th>Aspek &amp; Indikator Penilaian</th><th style="width:10%">Skor</th></tr></thead>
+  <tbody>${instrRows}</tbody>
+  <tfoot>
+    <tr><td colspan="2" style="border:1px solid #000;background:#e8e8e8;text-align:right;font-weight:bold;padding:4px 6px">PERSENTASE (%)</td><td style="border:1px solid #000;background:#e8e8e8;text-align:center;font-weight:bold;padding:4px">${persen}%</td></tr>
+    <tr><td colspan="2" style="border:1px solid #000;background:#e8e8e8;text-align:right;font-weight:bold;padding:4px 6px">KATEGORI</td><td style="border:1px solid #000;background:#e8e8e8;text-align:center;font-weight:bold;padding:4px">${kategori}</td></tr>
+  </tfoot>
+</table>
+<div class="cat"><div class="cat-l">14. Aspek pembelajaran yang belum tercapai dan saran perbaikan :</div><div class="cat-i">${kurang||'&nbsp;'}</div></div>
+<div class="cat"><div class="cat-l">15. Aspek pembelajaran yang telah tercapai dengan baik dan saran peningkatan :</div><div class="cat-i">${baik||'&nbsp;'}</div></div>
+<div class="ttd">
+  <div class="ttd-b"><div>Guru yang disupervisi,</div><div class="sp"></div><div class="nm">${namaGuru || '(...............................)'}</div><div class="np">NIP. ${nipGuru}</div></div>
+  <div class="ttd-b"><div>Supervisor / Kepala Sekolah,</div><div class="sp"></div><div class="nm">${namaSpv || '(...............................)'}</div><div class="np">NIP. ${nipSpv}</div></div>
+</div>
+<div class="ft">Aplikasi Supervisi Pembelajaran Mendalam — ${unit || sekolah.nama_sekolah || 'SDN 1 Raja'}</div>
+</div></body></html>`;
+}
+
+window.cetakForm = function() {
+  const html = buildLaporanHTML(null);
+  const w = window.open('','_blank','width=900,height=700');
+  w.document.open(); w.document.write(html); w.document.close();
+  w.onload = () => { w.focus(); w.print(); };
+};
+
+window.exportPDF = function(record) {
+  const nama = record ? record.nama : document.getElementById('sp_nama_guru').value || 'Data';
+  const tgl  = record ? record.tgl  : document.getElementById('sp_tanggal').value || '';
+  const html = buildLaporanHTML(record || null);
+
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;top:0;left:0;width:794px;height:1123px;border:none;opacity:0;pointer-events:none;z-index:-1';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  toast('⏳ Menyiapkan PDF...', 'info');
+
+  setTimeout(() => {
+    const el = iframe.contentDocument.body;
+    const opt = {
+      margin     : 0,
+      filename   : `Supervisi_${nama}_${tgl}.pdf`,
+      image      : { type: 'jpeg', quality: 1 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true, width: 794, windowWidth: 794, scrollX: 0, scrollY: 0 },
+      jsPDF      : { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(el).save().then(() => {
+      document.body.removeChild(iframe);
+      toast('✅ PDF berhasil disimpan!', 'success');
+    });
+  }, 1000);
+};
+
+// ===================== DATABASE =====================
+window.renderDB = function() {
+  const list     = document.getElementById('db-list');
+  const statusEl = document.getElementById('gs-status');
+  const db = getStore(KEY_SUPERVISI) || [];
+
+  if (db.length === 0) {
+    statusEl.className = 'gs-status err';
+    statusEl.innerHTML = '<span class="dot"></span> Belum ada data';
+    list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--c-muted)"><div style="font-size:2rem;margin-bottom:8px">📭</div><div style="font-weight:700;margin-bottom:4px">Belum ada data</div><div style="font-size:0.8rem">Simpan hasil supervisi dari tab Form Supervisi</div></div>`;
+    return;
+  }
+
+  statusEl.className = 'gs-status ok';
+  statusEl.innerHTML = `<span class="dot"></span> ${db.length} data tersimpan`;
+
+  const badgeKat = kat => {
+    if (kat && kat.includes('Baik Sekali')) return 'badge-bs';
+    if (kat === 'Baik')   return 'badge-b';
+    if (kat === 'Cukup')  return 'badge-c';
+    if (kat === 'Kurang') return 'badge-k';
+    return 'badge-ks';
+  };
+
+  list.innerHTML = `<div style="overflow-x:auto"><table class="tbl">
+    <thead><tr><th>Tanggal</th><th>Nama Guru</th><th>Mapel</th><th>Hasil</th><th>Aksi</th></tr></thead>
+    <tbody>
+    ${db.map((it, idx) => `<tr>
+      <td>${it.tgl ? fmtTgl(it.tgl) : '-'}</td>
+      <td><b>${it.nama || '-'}</b><br><small style="color:var(--c-muted)">${it.unit || ''}</small></td>
+      <td>${it.mapel || '-'}</td>
+      <td>${it.persen}% <span class="badge ${badgeKat(it.kat)}">${it.kat || '-'}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-primary btn-sm" onclick="muatRecord(${idx})">👁 Lihat</button>
+        <button class="btn btn-accent btn-sm" onclick="pdfFromDB(${idx})">📄 PDF</button>
+        <button class="btn btn-danger btn-sm" onclick="hapusRecord(${idx})">🗑</button>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+};
+
+window.muatRecord = function(idx) {
+  const db = getStore(KEY_SUPERVISI) || [];
+  const it = db[idx];
+  if (!it) return;
+  document.getElementById('sp_jenjang').value   = it.jenjang  || '';
+  document.getElementById('sp_unit').value      = it.unit     || '';
+  document.getElementById('sp_nama_guru').value = it.nama     || '';
+  document.getElementById('sp_nip_guru').value  = it.nip      || '';
+  document.getElementById('sp_nama_spv').value  = it.nama_spv || '';
+  document.getElementById('sp_nip_spv').value   = it.nip_spv  || '';
+  document.getElementById('sp_mapel').value     = it.mapel    || '';
+  document.getElementById('sp_materi').value    = it.materi   || '';
+  document.getElementById('sp_tujuan').value    = it.tujuan   || '';
+  document.getElementById('sp_tanggal').value   = normalizeTgl(it.tgl || '');
+  document.getElementById('sp_catatan_kurang').value = it.kurang || '';
+  document.getElementById('sp_catatan_baik').value   = it.baik   || '';
+  document.getElementById('sp_cari_guru').value = it.nama || '';
+  const chks = document.querySelectorAll('.sp-chk');
+  if (it.ceklis) it.ceklis.forEach((v, i) => { if (chks[i]) chks[i].checked = v; });
+  hitungSkor(); syncTTD();
+  showPage('pg-form');
+  window.scrollTo(0, 0);
+};
+
+window.hapusRecord = async function(idx) {
+  if (!confirm('Hapus data supervisi ini?')) return;
+  let db = getStore(KEY_SUPERVISI) || [];
+  const deleted = db.splice(idx, 1)[0];
+  setStore(KEY_SUPERVISI, db);
+
+  // Kirim hapus ke Google Sheets
+  await gsPostAsync({ type: 'delete', id: deleted.id });
+  toast('🗑 Data dihapus.', 'info');
+  renderDB();
+  renderDashboard();
+};
+
+window.pdfFromDB = function(idx) {
+  const db = getStore(KEY_SUPERVISI) || [];
+  const record = db[idx];
+  if (!record) return;
+  // Load into form first then export
+  muatRecord(idx);
+  setTimeout(() => exportPDF(record), 800);
+};
+
+// ===================== GOOGLE SHEETS FETCH =====================
+async function spFetchFromSheets() {
+  const urls = [
+    GS_URL + '?action=getAllData&t=' + Date.now(),
+    GS_URL + '?t=' + Date.now()
+  ];
+  // Metode 1: Direct CORS
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { method: 'GET', mode: 'cors', signal: AbortSignal.timeout(12000) });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.status === 'ok') return json;
+      }
+    } catch(e) {}
+  }
+  // Metode 2: JSONP
+  try {
+    const data = await fetchJSONP();
+    if (data) return data;
+  } catch(e) {}
+  // Metode 3: Proxy allorigins
+  try {
+    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(GS_URL + '?action=getAllData&t=' + Date.now());
+    const res3 = await fetch(proxyUrl, { signal: AbortSignal.timeout(12000) });
+    if (res3.ok) {
+      const w = await res3.json();
+      const j = JSON.parse(w.contents);
+      if (j.status === 'ok') return j;
+    }
+  } catch(e) {}
+  // Metode 4: Proxy corsproxy.io
+  try {
+    const proxy2 = 'https://corsproxy.io/?' + encodeURIComponent(GS_URL + '?action=getAllData&t=' + Date.now());
+    const res4 = await fetch(proxy2, { signal: AbortSignal.timeout(12000) });
+    if (res4.ok) {
+      const j = await res4.json();
+      if (j.status === 'ok') return j;
+    }
+  } catch(e) {}
+  return null;
+}
+
+function fetchJSONP() {
+  return new Promise((resolve, reject) => {
+    const cb = '_sp_cb_' + Date.now();
+    const timer = setTimeout(() => { delete window[cb]; const s = document.getElementById('_sp_jsonp'); if(s) s.remove(); reject(new Error('timeout')); }, 10000);
+    window[cb] = (json) => { clearTimeout(timer); delete window[cb]; const s = document.getElementById('_sp_jsonp'); if(s) s.remove(); (json?.status === 'ok') ? resolve(json) : reject(new Error('invalid')); };
+    const s = document.createElement('script');
+    s.id = '_sp_jsonp'; s.src = GS_URL + '?action=getAllData&callback=' + cb + '&t=' + Date.now();
+    s.onerror = () => { clearTimeout(timer); delete window[cb]; s.remove(); reject(new Error('script error')); };
+    document.head.appendChild(s);
+  });
+}
+
+function mergeData(local, remote) {
+  if (!remote?.length) return local;
+  const ids = new Set(local.map(x => String(x.id)));
+  const merged = [...local];
+  remote.forEach(r => { if (!r.id || ids.has(String(r.id))) return; if (!r.ceklis) r.ceklis = []; merged.push(r); });
+  return merged.sort((a,b) => (b.tgl||'').localeCompare(a.tgl||''));
+}
+
+window.ambilDariSheets = async function(silent) {
+  const statusEl = document.getElementById('gs-status');
+  statusEl.className = 'gs-status loading';
+  statusEl.innerHTML = '<span class="dot"></span> Menghubungkan ke Google Sheets...';
+  const result = await spFetchFromSheets();
+  if (result !== null) {
+    let totalSupervisi = 0;
+    // Simpan data sekolah jika ada
+    if (result.sekolah && typeof result.sekolah === 'object' && result.sekolah.nama_sekolah) {
+      setStore(KEY_SEKOLAH, result.sekolah);
+      loadDataIsian();
+      updateHeaderSubtitle();
+    }
+    // Simpan data kepsek jika ada
+    if (result.kepsek && typeof result.kepsek === 'object') {
+      setStore(KEY_KEPSEK, result.kepsek);
+    }
+    // Simpan data guru jika ada
+    if (Array.isArray(result.guru) && result.guru.length) {
+      setStore(KEY_GURU, result.guru);
+    }
+    // Data dari Sheets = sumber kebenaran utama
+    // Lokal hanya dipakai jika Sheets kosong (belum ada data)
+    const remoteSupervisi = Array.isArray(result.supervisi) ? result.supervisi :
+                            (Array.isArray(result.data) ? result.data : []);
+    let db;
+    if (remoteSupervisi.length > 0) {
+      // Sheets punya data → pakai Sheets, normalisasi tanggal
+      db = remoteSupervisi.map(r => ({ ...r, tgl: normalizeTgl(r.tgl || '') }));
+    } else {
+      // Sheets kosong → pertahankan lokal (mungkin belum pernah sync)
+      db = getStore(KEY_SUPERVISI) || [];
+    }
+    setStore(KEY_SUPERVISI, db);
+    totalSupervisi = db.length;
+    statusEl.className = 'gs-status ok';
+    statusEl.innerHTML = `<span class="dot"></span> ${totalSupervisi} supervisi (✅ tersinkron)`;
+    renderDB();
+    renderDashboard();
+    if (!silent) toast(`✅ Data berhasil diambil dari Google Sheets!`, 'success');
+    return;
+  }
+  statusEl.className = 'gs-status err';
+  statusEl.innerHTML = '<span class="dot"></span> Koneksi gagal — periksa Google Apps Script';
+  if (!silent) {
+    document.getElementById('import-panel').style.display = 'block';
+    toast('⚠️ Gagal terhubung ke Google Sheets. Periksa GS_URL & izin deploy.', 'info');
+  }
+};
+
+window.tutupImport = function() { document.getElementById('import-panel').style.display = 'none'; document.getElementById('import-raw').value = ''; };
+
+window.prosesImport = function() {
+  const raw = document.getElementById('import-raw').value.trim();
+  if (!raw) { toast('⚠️ Kotak paste masih kosong!', 'error'); return; }
+  try {
+    const lines = raw.split('\n');
+    if (lines.length < 2) throw new Error('Data terlalu sedikit');
+    const header = lines[0].split('\t').map(h => h.trim().toLowerCase());
+    const col = (nama) => {
+      const aliases = { tgl:['tanggal supervisi','tgl','tanggal'], jenjang:['jenjang'], unit:['unit kerja','unit'], nama:['nama guru','nama'], nip:['nip guru','nip'], mapel:['mapel / kelas','mapel'], materi:['pokok materi','materi'], tujuan:['tujuan pembelajaran','tujuan'], nama_spv:['nama supervisor','supervisor'], nip_spv:['nip supervisor'], persen:['persentase (%)','persen'], kat:['kategori','kat'], kurang:['catatan belum tercapai','kurang'], baik:['catatan sudah baik','baik'], id:['id data','id'], ceklis:['ceklis (json)','ceklis'] };
+      for (const t of (aliases[nama]||[nama])) { const i = header.indexOf(t); if (i >= 0) return i; }
+      return -1;
+    };
+    const idxMap = {};
+    ['tgl','jenjang','unit','nama','nip','mapel','materi','tujuan','nama_spv','nip_spv','persen','kat','kurang','baik','id','ceklis'].forEach(k => idxMap[k] = col(k));
+    const get = (cells, key) => { const i = idxMap[key]; return (i >= 0 && cells[i] !== undefined) ? cells[i].trim() : ''; };
+    const imported = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cells = lines[i].split('\t');
+      const nama = get(cells, 'nama');
+      if (!nama) continue;
+      let ceklis = []; try { ceklis = JSON.parse(get(cells,'ceklis') || '[]'); } catch(e) {}
+      imported.push({ id: get(cells,'id') || (Date.now()+i), tgl: normalizeTgl(get(cells,'tgl')), jenjang: get(cells,'jenjang')||'SD', unit: get(cells,'unit'), nama, nip: get(cells,'nip'), nama_spv: get(cells,'nama_spv'), nip_spv: get(cells,'nip_spv'), mapel: get(cells,'mapel'), materi: get(cells,'materi'), tujuan: get(cells,'tujuan'), persen: get(cells,'persen')||'0', kat: get(cells,'kat'), kurang: get(cells,'kurang'), baik: get(cells,'baik'), ceklis });
+    }
+    if (!imported.length) throw new Error('Tidak ada data valid');
+    const merged = mergeData(getStore(KEY_SUPERVISI)||[], imported);
+    setStore(KEY_SUPERVISI, merged);
+    const statusEl = document.getElementById('gs-status');
+    statusEl.className = 'gs-status ok';
+    statusEl.innerHTML = `<span class="dot"></span> ${merged.length} data (✅ diimpor)`;
+    toast(`✅ ${imported.length} data berhasil diimpor!`, 'success');
+    tutupImport(); renderDB(); renderDashboard();
+  } catch(err) { toast('❌ Gagal proses: ' + err.message, 'error'); }
+};
+
+// ===================== SETTING =====================
+window.testKoneksi = async function() {
+  try { await fetch(GS_URL + '?test=1', { method: 'GET', mode: 'no-cors' }); toast('✅ Koneksi ke Google Sheets berhasil!', 'success'); }
+  catch(e) { toast('❌ Gagal terhubung: ' + e.message, 'error'); }
+};
+
+window.syncAllData = async function() {
+  const sekolah   = getStore(KEY_SEKOLAH)   || {};
+  const kepsek    = getStore(KEY_KEPSEK)    || {};
+  const gurus     = getStore(KEY_GURU)      || [];
+  const supervisi = getStore(KEY_SUPERVISI) || [];
+  if (!supervisi.length && !gurus.length) {
+    toast('⚠️ Tidak ada data untuk dikirim.', 'info'); return;
+  }
+  toast('⏳ Mengirim data ke Google Sheets...', 'info');
+  const ok = await gsPostAsync({ type: 'sync_all', sekolah, kepsek, gurus, supervisi });
+  if (ok) toast('✅ Data berhasil dikirim! Buka Google Sheets untuk memastikan.', 'success');
+  else toast('❌ Gagal mengirim. Periksa koneksi internet.', 'error');
+};
+
+window.saveAllDataToSheets = window.syncAllData;
+
+window.backup = function() {
+  const data = {
+    _versi: '2.0',
+    _tanggal: new Date().toISOString(),
+    supervisi: getStore(KEY_SUPERVISI)||[],
+    guru: getStore(KEY_GURU)||[],
+    sekolah: getStore(KEY_SEKOLAH)||{},
+    kepsek: getStore(KEY_KEPSEK)||{}
+  };
+  const b = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  const tgl = new Date().toISOString().slice(0,10);
+  a.href = URL.createObjectURL(b); a.download = `backup_supervisi_${tgl}.json`; a.click();
+  toast('✅ Backup JSON berhasil diunduh!', 'success');
+};
+
+window.restoreBackup = function() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        let restored = 0;
+        if (Array.isArray(data.supervisi) && data.supervisi.length) {
+          const local = getStore(KEY_SUPERVISI) || [];
+          setStore(KEY_SUPERVISI, mergeData(local, data.supervisi));
+          restored += data.supervisi.length;
+        }
+        if (Array.isArray(data.guru) && data.guru.length) { setStore(KEY_GURU, data.guru); }
+        if (data.sekolah && Object.keys(data.sekolah).length) setStore(KEY_SEKOLAH, data.sekolah);
+        if (data.kepsek && Object.keys(data.kepsek).length) setStore(KEY_KEPSEK, data.kepsek);
+        renderDB(); renderDashboard();
+        toast(`✅ Restore berhasil! ${restored} data supervisi dipulihkan.`, 'success');
+      } catch(err) { toast('❌ File backup tidak valid: ' + err.message, 'error'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+};
+
+window.restore = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (confirm('Restore data cadangan ini? Data supervisi yang belum ada akan ditambahkan (tidak menimpa data yang sudah ada).')) {
+        if (data.supervisi && Array.isArray(data.supervisi)) {
+          const local = getStore(KEY_SUPERVISI) || [];
+          setStore(KEY_SUPERVISI, mergeData(local, data.supervisi));
+        }
+        if (data.guru)    setStore(KEY_GURU, data.guru);
+        if (data.sekolah) setStore(KEY_SEKOLAH, data.sekolah);
+        if (data.kepsek)  setStore(KEY_KEPSEK, data.kepsek);
+        loadDataIsian(); renderDB(); renderDashboard();
+        toast('✅ Restore berhasil! Data supervisi dipulihkan.', 'success');
+      }
+    } catch { toast('❌ File rusak atau bukan format backup yang valid!', 'error'); }
+  };
+  r.readAsText(file);
+};
+
+window.resetApp = function() {
+  if (confirm('Reset semua data aplikasi? Tindakan ini tidak dapat dibatalkan!')) {
+    [KEY_SUPERVISI, KEY_GURU, KEY_SEKOLAH, KEY_KEPSEK].forEach(k => localStorage.removeItem(k));
+    loadDataIsian(); renderDashboard(); renderDB();
+    toast('✅ Aplikasi direset.', 'info');
+  }
+};
+
+// ===================== HELPERS =====================
+// Kirim ke GAS via FormData — satu-satunya cara yang bekerja dengan no-cors
+// GAS membaca via e.parameter.payload
+function gsPost(payload, onDone) {
+  const form = new FormData();
+  form.append('payload', JSON.stringify(payload));
+  fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: form })
+    .then(() => { if (onDone) onDone(true); })
+    .catch(() => { if (onDone) onDone(false); });
+}
+async function gsPostAsync(payload) {
+  return new Promise((resolve) => {
+    const form = new FormData();
+    form.append('payload', JSON.stringify(payload));
+    fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: form })
+      .then(() => resolve(true)).catch(() => resolve(false));
+  });
+}
+// Alias lama agar tidak ada yang rusak
+function sendDataToSheets(payload) { gsPost(payload); }
+
+function syncToSheets_attempt() {
+  // Auto-ambil semua data dari Google Sheets saat aplikasi dibuka
+  const statusEl = document.getElementById('gs-status');
+  statusEl.className = 'gs-status loading';
+  statusEl.innerHTML = '<span class="dot"></span> Menghubungkan...';
+  // Tunda sedikit agar DOM siap sempurna
+  setTimeout(() => ambilDariSheets(true), 800);
+}
+
+function normalizeTgl(tgl) {
+  // Kembalikan format YYYY-MM-DD untuk input type="date"
+  if (!tgl) return '';
+  tgl = String(tgl).trim();
+  // Sudah format YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(tgl)) return tgl;
+  // Format DD/MM/YYYY
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(tgl)) {
+    const [d, m, y] = tgl.split('/');
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  // Format DD-MM-YYYY
+  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(tgl)) {
+    const [d, m, y] = tgl.split('-');
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  // Format teks Indonesia: "12 Maret 2026" atau "12 Mar 2026"
+  const blnMap = { januari:1,jan:1,februari:2,feb:2,maret:3,mar:3,april:4,apr:4,mei:5,juni:6,jun:6,juli:7,jul:7,agustus:8,agu:8,september:9,sep:9,oktober:10,okt:10,november:11,nov:11,desember:12,des:12 };
+  const m2 = tgl.toLowerCase().match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
+  if (m2) {
+    const bln = blnMap[m2[2]];
+    if (bln) return `${m2[3]}-${String(bln).padStart(2,'0')}-${m2[1].padStart(2,'0')}`;
+  }
+  return tgl; // Kembalikan apa adanya jika tidak bisa dikenali
+}
+
+function fmtTgl(tgl) {
+  if (!tgl) return '—';
+  const normalized = normalizeTgl(tgl);
+  const raw = (typeof normalized === 'string' && (normalized.includes('T') || normalized.includes(' '))) ? normalized : normalized + 'T00:00:00';
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return tgl; // Kembalikan nilai asli jika tidak valid
+  const bln = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return `${d.getDate()} ${bln[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// ===================== MODAL =====================
+window.showInfo = function(e, title, info) {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('info-title').innerText = title;
+  document.getElementById('info-body').innerText  = info;
+  document.getElementById('info-modal').classList.add('show');
+};
+window.closeModal = function() { document.getElementById('info-modal').classList.remove('show'); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ===================== TOAST =====================
+window.toast = function(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 3200);
+};
+
+// ===================== PAGE NAV =====================
+window.showPage = function(p) {
+  document.querySelectorAll('.page').forEach(el => el.style.display = 'none');
+  document.getElementById(p).style.display = 'block';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const tabId = 'tab-' + p.replace('pg-','');
+  const tab = document.getElementById(tabId);
+  if (tab) tab.classList.add('active');
+  if (p === 'pg-database') renderDB();
+  if (p === 'pg-setting')  loadLogo();
+  if (p === 'pg-dashboard') renderDashboard();
+  if (p === 'pg-data')     { loadDataIsian(); }
+};
+</script>
+</body>
+</html>
